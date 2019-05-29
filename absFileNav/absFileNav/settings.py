@@ -52,6 +52,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'absFileNav.urls'
 
+#default file location for saved files
+MEDIA_ROOT='/files/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

@@ -4,6 +4,7 @@ from django.template import loader
 from .models import uploadFile
 from django.core.files.storage import FileSystemStorage
 
+
 def index(request):
 
     if request.method == 'POST' and request.FILES['myFile']:
@@ -11,15 +12,22 @@ def index(request):
         print ('This file = ' + str(request.FILES['myFile']))
         print ('This file = ' + str(request))
 
-        myfile = request.FILES['myFile']
+        myfile   = request.FILES['myFile']
 
-        fs = FileSystemStorage()
+        fs       = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
         uploaded_file_url = fs.url(filename)
-        return render(request, 'upload/index.html', {
-            'uploaded_file_url': uploaded_file_url
-        })
 
+        # store uploaded file data in db
+        upfile = uploadFile()
+        upfile.name = filename
+
+        # add path by if it's default or chosen file destination
+
+        # save uploaded file
+        upfile.save()
+
+    #page template and view variables
     template = loader.get_template('upload/index.html')
     context = dict()
 
