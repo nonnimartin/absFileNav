@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/absFileNav/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/absFileNav/util/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/absFileNav/util/createTree.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/absFileNav/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/db.sqlite3" afterDir="false" />
@@ -27,51 +30,74 @@
         <counts>
           <entry key="css" value="3" />
           <entry key="html" value="1" />
-          <entry key="py" value="7" />
+          <entry key="py" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSS" value="3" />
           <entry key="HTML" value="1" />
-          <entry key="Python" value="7" />
+          <entry key="Python" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="Python Console" value="174" />
           <entry key="css" value="3" />
-          <entry key="html" value="114" />
-          <entry key="py" value="624" />
+          <entry key="html" value="346" />
+          <entry key="py" value="2154" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="3" />
-          <entry key="HTML" value="114" />
-          <entry key="Python" value="624" />
+          <entry key="HTML" value="346" />
+          <entry key="Python" value="2328" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="6" selection-start-line="34" selection-start-column="6" selection-end-line="34" selection-end-column="6" />
+            <state relative-caret-position="300">
+              <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
+                <marker date="1559165815361" expanded="true" signature="1751:1756" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="199">
+              <caret line="35" column="52" selection-start-line="35" selection-start-column="52" selection-end-line="35" selection-end-column="52" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/absFileNav/util/createTree.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="26">
+              <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
+        <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="67" column="3" selection-start-line="67" selection-start-column="3" selection-end-line="67" selection-end-column="3" />
+            <state relative-caret-position="585">
+              <caret line="39" column="33" selection-start-line="39" selection-start-column="33" selection-end-line="39" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -92,16 +118,7 @@
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="105">
-              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="66" column="18" selection-start-line="66" selection-start-column="18" selection-end-line="66" selection-end-column="18" />
+              <caret line="7" column="46" selection-start-line="7" selection-start-column="46" selection-end-line="7" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -123,8 +140,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -134,7 +151,13 @@
       <find>arrow</find>
       <find>remove</find>
       <find>myfile</find>
+      <find>replaceSpaces</find>
+      <find>identi</find>
     </findStrings>
+    <replaceStrings>
+      <replace>clean_file_name</replace>
+      <replace>replace_spaces</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -146,8 +169,9 @@
         <option value="$PROJECT_DIR$/absFileNav/upload/admin.py" />
         <option value="$PROJECT_DIR$/absFileNav/absFileNav/urls.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/static/upload/style.css" />
-        <option value="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/models.py" />
+        <option value="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" />
+        <option value="$PROJECT_DIR$/absFileNav/util/createTree.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/views.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html" />
       </list>
@@ -155,7 +179,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="7" />
-    <option name="y" value="45" />
+    <option name="y" value="44" />
     <option name="width" value="1117" />
     <option name="height" value="917" />
   </component>
@@ -211,6 +235,12 @@
               <item name="upload" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="absFileNav" type="b2602c69:ProjectViewProjectNode" />
+              <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
+              <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -220,6 +250,12 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/absFileNav" />
+      <recent name="$PROJECT_DIR$/absFileNav/absFileNav" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -270,14 +306,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="7" y="45" width="1117" height="917" extended-state="0" />
+    <frame x="7" y="44" width="1117" height="917" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" />
+      <window_info anchor="bottom" id="Python Console" visible="true" weight="0.32969698" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -323,10 +359,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/static/upload/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="66" column="18" selection-start-line="66" selection-start-column="18" selection-end-line="66" selection-end-column="18" />
+        <state relative-caret-position="95">
+          <caret line="78" column="15" lean-forward="true" selection-start-line="78" selection-start-column="15" selection-end-line="78" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="46" selection-start-line="7" selection-start-column="46" selection-end-line="7" selection-end-column="46" />
         </state>
       </provider>
     </entry>
@@ -340,34 +383,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/models.py">
+    <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/static/upload/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="78" column="15" lean-forward="true" selection-start-line="78" selection-start-column="15" selection-end-line="78" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="67" column="3" selection-start-line="67" selection-start-column="3" selection-end-line="67" selection-end-column="3" />
+        <state relative-caret-position="585">
+          <caret line="39" column="33" selection-start-line="39" selection-start-column="33" selection-end-line="39" selection-end-column="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="6" selection-start-line="34" selection-start-column="6" selection-end-line="34" selection-end-column="6" />
+        <state relative-caret-position="300">
+          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
+            <marker date="1559165815361" expanded="true" signature="1751:1756" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/util/createTree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26">
+          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="35" column="52" selection-start-line="35" selection-start-column="52" selection-end-line="35" selection-end-column="52" />
         </state>
       </provider>
     </entry>

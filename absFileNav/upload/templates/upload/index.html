@@ -1,9 +1,8 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'upload/style.css' %}">
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 
 {% block content %}
-
-<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -32,6 +31,12 @@
   {% endif %}
 
 {% endblock %}
+
+<script type="text/javascript">
+    var data = decodeURI("{{ json_file_tree|escapejs }}")
+    console.log(data);
+</script>
+
 
 <script type="text/javascript">
     function readURL(input) {
