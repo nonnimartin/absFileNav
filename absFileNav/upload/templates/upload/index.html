@@ -1,0 +1,70 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'upload/style.css' %}">
+
+{% block content %}
+
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="file-upload">
+      <button class="file-upload-btn" type="submit" onclick="$('.file-upload-input').trigger( 'click' )">Upload A File</button>
+
+      <div class="image-upload-wrap">
+        <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" name="myFile" />
+        <div class="drag-text">
+          <h3>Drag and drop a file to Upload</h3>
+        </div>
+      </div>
+      <div class="file-upload-content">
+          <br>
+          <br>
+
+        <div class="image-title-wrap">
+          <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File</span></button>
+        </div>
+      </div>
+  </div>
+</form>
+
+
+  {% if uploaded_file_url %}
+    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+  {% endif %}
+
+{% endblock %}
+
+<script type="text/javascript">
+    function readURL(input) {
+  if (input.files && input.files[0]) {
+
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      $('.image-upload-wrap').hide();
+
+      $('.file-upload-image').attr('src', e.target.result);
+      $('.file-upload-content').show();
+
+      $('.image-title').html(input.files[0].name);
+    };
+
+    reader.readAsDataURL(input.files[0]);
+
+  } else {
+    removeUpload();
+  }
+}
+
+function removeUpload() {
+  $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+  $('.file-upload-content').hide();
+  $('.image-upload-wrap').show();
+}
+$('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+});
+</script>
