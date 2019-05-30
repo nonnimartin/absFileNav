@@ -44,9 +44,10 @@ def recurse_tree(node_list, dirs_only):
 
         this_dict = dict()
         rec_count += 1
-        this_dict['id'] = 'tree' + str(rec_count)
-        this_dict['type'] = item['type']
-        this_dict['text'] = item['name']
+        this_dict['id']       = 'tree' + str(rec_count)
+        this_dict['type']     = item['type']
+        this_dict['text']     = item['name']
+        this_dict['fullPath'] = item['path'] + '/' + item['name']
         parent = item['path'].rsplit('/', 1)[0]
 
         if parent in path_to_id.keys():

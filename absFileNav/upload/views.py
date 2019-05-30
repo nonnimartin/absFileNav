@@ -7,21 +7,31 @@ from django.conf import settings
 import hashlib
 from functools import partial
 from util import createTree
+from forms import FileUploadPath
 
 def index(request):
 
+    #print('content_params = ' + str(form))
+
     if request.method == 'POST' and request.FILES['myFile']:
 
-        print ('This file = ' + str(request.FILES['myFile']))
-        print ('This file = ' + str(request))
+        this_form = FileUploadPath(request.POST)
+        # check whether it's valid:
+        if this_form.is_valid():
+            print('it is valid')
+            print(this_form)
+
+        print('This file = ' + str(request.FILES['myFile']))
+        print('This file = ' + str(request))
 
         myfile   = request.FILES['myFile']
 
         #if file is too big chunked will be true, and must be processed in stream
         chunked  = request.FILES['myFile'].multiple_chunks()
-        print ('chunked = ' + str(chunked))
+        print('chunked = ' + str(chunked))
 
         if chunked:
+            #handle larger file streams here
             pass
 
         else:
@@ -38,16 +48,20 @@ def index(request):
 
             # add path by if it's default or chosen file destination
 
+
             # save uploaded file
             upfile.save()
+
+    #file upload path form
+    pathForm = FileUploadPath()
 
     #page template and view variables
     template = loader.get_template('upload/index.html')
 
     #get json of file system for saving and set in view
-    json_file_tree = createTree.get_tree('.', True)
-
     context = dict()
+    context['path_selected']  = False
+    context['form'] = pathForm
     context['json_file_tree'] = createTree.get_tree('.', True)
 
 
