@@ -31,6 +31,7 @@ def index(request):
 
         if chunked:
             #handle larger file streams here
+            print('got here')
             pass
 
         else:
