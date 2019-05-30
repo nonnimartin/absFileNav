@@ -3,6 +3,9 @@ import json
 import errno
 
 path_to_id = {}
+final_list = list()
+rec_count  = 0
+recurse_children = list()
 
 def path_hierarchy(path):
     hierarchy = {
@@ -24,73 +27,56 @@ def path_hierarchy(path):
     return hierarchy
 
 
-def recurse_children(child_list, counter):
-    # recurse children until no more children to recurse
+def recurse_tree(node_list):
 
-    this_dict = dict()
-    return_list = list()
+    global path_to_id
+    global final_list
+    global rec_count
+    global recurse_children
 
-    #print('this map = ' + str(path_to_id))
+    # treat as list of nodes
+    for item in node_list:
 
-    for node in child_list:
-        print('this node processing: ' + str(node))
-        counter += 1
-        print('counter = ' + str(counter))
-        this_dict['id'] = 'tree' + str(counter)
-        path_to_id[node['path']] = this_dict['id']
-        this_dict['text'] = node['name']
-        this_dict['type'] = node['type']
-        this_path = node['path'].rsplit('/', 1)[0]
-        print('this path = ' + this_path)
-        this_dict['parent'] = path_to_id[this_path]
+        this_dict = dict()
+        rec_count += 1
+        this_dict['id'] = 'tree' + str(rec_count)
+        this_dict['type'] = item['type']
+        this_dict['text'] = item['name']
+        parent = item['path'].rsplit('/', 1)[0]
 
-        print('this node finished: ' + str(this_dict))
-        print('=======================================')
+        if parent in path_to_id.keys():
+            this_dict['parent'] = path_to_id[parent]
+        else:
+            this_dict['parent'] = '#'
 
-        #THIS WILL NOT HANDLE ALL CHILDREN
-        ##MAYBE GO THROUGH SERIALLY AND POP ITEMS?
-        if 'children' in node:
-            recurse_children(node['children'], counter)
+        path_to_id[item['path']] = this_dict['id']
 
-        return_list.append(this_dict)
+        final_list.append(this_dict)
 
-    return return_list
+        # handle children as new list
+        if 'children' in item:
+            recurse_tree(item['children'])
 
-
-def prepare_for_tree_view(dir_dict):
-    counter = 0
-    tree_list = list()
-    returned_children = list()
-
-    # print(json.dumps(dir_dict))
-
-    # create base dir entry
-    print('this node processing: ' + str(dir_dict))
-    this_dict = dict()
-    this_dict['id'] = 'tree' + str(counter)
-    this_dict['parent'] = '#'
-    this_dict['type'] = dir_dict['type']
-    this_dict['text'] = dir_dict['name']
-    print(this_dict)
-    tree_list.append(this_dict)
-
-    # map path to unique id
-    path_to_id[dir_dict['path']] = this_dict['id']
-
-    # if there are children, recurse through them and their children and create entries
-    # RECURSE IN HERE
-    if 'children' in dir_dict:
-        children = dir_dict['children']
-        returned_children = recurse_children(children, counter)
-
-    tree_list = tree_list + returned_children
-
-    return tree_list
+    return final_list
 
 
 def main():
-    testThis = path_hierarchy('/tmp/test')
-    return json.dumps(prepare_for_tree_view(testThis))
+
+    global path_to_id
+    global final_list
+    global rec_count
+    global recurse_children
+    hierarchy      = path_hierarchy('.')
+    hierarchy_list = [hierarchy]
+    end_dict       = recurse_tree(hierarchy_list)
+
+    #clear the globals
+    path_to_id = {}
+    final_list = list()
+    rec_count = 0
+    recurse_children = list()
+
+    return json.dumps(end_dict)
 
 
 if __name__ == '__main__':
