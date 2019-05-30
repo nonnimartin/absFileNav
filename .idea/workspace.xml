@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/absFileNav/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,14 +37,14 @@
         <counts>
           <entry key="Python Console" value="174" />
           <entry key="css" value="3" />
-          <entry key="html" value="1285" />
+          <entry key="html" value="1569" />
           <entry key="py" value="5396" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="3" />
-          <entry key="HTML" value="1285" />
+          <entry key="HTML" value="1569" />
           <entry key="Python" value="5570" />
         </counts>
       </usages-collector>
@@ -68,8 +68,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="51" selection-start-line="10" selection-start-column="51" selection-end-line="10" selection-end-column="51" />
+            <state relative-caret-position="300">
+              <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -161,10 +161,12 @@
       <find>upload</find>
       <find>fs</find>
       <find>file-upload-input</find>
+      <find>activate</find>
     </findStrings>
     <replaceStrings>
       <replace>clean_file_name</replace>
       <replace>replace_spaces</replace>
+      <replace>enable</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -421,8 +423,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="51" selection-start-line="10" selection-start-column="51" selection-end-line="10" selection-end-column="51" />
+        <state relative-caret-position="300">
+          <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
         </state>
       </provider>
     </entry>
