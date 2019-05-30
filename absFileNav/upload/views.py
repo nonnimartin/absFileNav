@@ -45,10 +45,10 @@ def index(request):
     template = loader.get_template('upload/index.html')
 
     #get json of file system for saving and set in view
-    json_file_tree = createTree.main()
+    json_file_tree = createTree.get_tree('.')
 
     context = dict()
-    context['json_file_tree'] = createTree.main()
+    context['json_file_tree'] = createTree.get_tree('.')
 
 
     return HttpResponse(template.render(context, request))

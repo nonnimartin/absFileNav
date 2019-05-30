@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/absFileNav/upload/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/absFileNav/util/createTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/util/createTree.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,28 +38,28 @@
           <entry key="Python Console" value="174" />
           <entry key="css" value="3" />
           <entry key="html" value="636" />
-          <entry key="py" value="3929" />
+          <entry key="py" value="3971" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="3" />
           <entry key="HTML" value="636" />
-          <entry key="Python" value="4103" />
+          <entry key="Python" value="4145" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="497">
-              <caret line="50" column="48" selection-start-line="50" selection-start-column="48" selection-end-line="50" selection-end-column="48" />
+              <caret line="50" column="54" selection-start-line="50" selection-start-column="54" selection-end-line="50" selection-end-column="54" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
-                <marker date="1559192090094" expanded="true" signature="1725:1730" ph="..." />
+                <marker date="1559240391484" expanded="true" signature="1739:1744" ph="..." />
               </folding>
             </state>
           </provider>
@@ -73,11 +74,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/absFileNav/util/createTree.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="495">
-              <caret line="68" column="38" selection-start-line="68" selection-start-column="38" selection-end-line="68" selection-end-column="38" />
+              <caret line="68" column="40" selection-start-line="68" selection-start-column="40" selection-end-line="68" selection-end-column="40" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -165,9 +166,9 @@
         <option value="$PROJECT_DIR$/absFileNav/upload/static/upload/style.css" />
         <option value="$PROJECT_DIR$/absFileNav/upload/models.py" />
         <option value="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" />
-        <option value="$PROJECT_DIR$/absFileNav/upload/views.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html" />
         <option value="$PROJECT_DIR$/absFileNav/util/createTree.py" />
+        <option value="$PROJECT_DIR$/absFileNav/upload/views.py" />
       </list>
     </option>
   </component>
@@ -377,17 +378,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="50" column="48" selection-start-line="50" selection-start-column="48" selection-end-line="50" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-            <marker date="1559192090094" expanded="true" signature="1725:1730" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
@@ -405,9 +395,20 @@
     <entry file="file://$PROJECT_DIR$/absFileNav/util/createTree.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
-          <caret line="68" column="38" selection-start-line="68" selection-start-column="38" selection-end-line="68" selection-end-column="38" />
+          <caret line="68" column="40" selection-start-line="68" selection-start-column="40" selection-end-line="68" selection-end-column="40" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="497">
+          <caret line="50" column="54" selection-start-line="50" selection-start-column="54" selection-end-line="50" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+            <marker date="1559240391484" expanded="true" signature="1739:1744" ph="..." />
           </folding>
         </state>
       </provider>

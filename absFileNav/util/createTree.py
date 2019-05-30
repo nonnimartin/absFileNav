@@ -60,13 +60,13 @@ def recurse_tree(node_list):
     return final_list
 
 
-def main():
+def get_tree(path):
 
     global path_to_id
     global final_list
     global rec_count
     global recurse_children
-    hierarchy      = path_hierarchy('.')
+    hierarchy      = path_hierarchy(path)
     hierarchy_list = [hierarchy]
     end_dict       = recurse_tree(hierarchy_list)
 
@@ -78,6 +78,3 @@ def main():
 
     return json.dumps(end_dict)
 
-
-if __name__ == '__main__':
-    main()
