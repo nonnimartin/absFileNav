@@ -31,8 +31,11 @@ def index(request):
 
         if chunked:
             #handle larger file streams here
-            print('got here')
-            pass
+            newPath = str(path) + '/' + str(replace_spaces(myfile.name))
+            with open(newPath, 'wb+') as destination:
+                for chunk in myfile.chunks():
+                    destination.write(chunk)
+
 
         else:
             if path:
