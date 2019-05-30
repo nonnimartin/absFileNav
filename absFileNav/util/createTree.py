@@ -8,6 +8,7 @@ rec_count  = 0
 recurse_children = list()
 
 def path_hierarchy(path):
+    #get file system represented as a hierarchy
     hierarchy = {
         'type': 'folder',
         'name': os.path.basename(path),
@@ -27,7 +28,7 @@ def path_hierarchy(path):
     return hierarchy
 
 
-def recurse_tree(node_list):
+def recurse_tree(node_list, dirs_only):
 
     global path_to_id
     global final_list
@@ -36,6 +37,10 @@ def recurse_tree(node_list):
 
     # treat as list of nodes
     for item in node_list:
+
+        #do not include files if dirs_only is true
+        if dirs_only and item['type'] == 'file':
+            continue
 
         this_dict = dict()
         rec_count += 1
@@ -55,12 +60,12 @@ def recurse_tree(node_list):
 
         # handle children as new list
         if 'children' in item:
-            recurse_tree(item['children'])
+            recurse_tree(item['children'], dirs_only)
 
     return final_list
 
 
-def get_tree(path):
+def get_tree(path, dirs_only):
 
     global path_to_id
     global final_list
@@ -68,7 +73,7 @@ def get_tree(path):
     global recurse_children
     hierarchy      = path_hierarchy(path)
     hierarchy_list = [hierarchy]
-    end_dict       = recurse_tree(hierarchy_list)
+    end_dict       = recurse_tree(hierarchy_list, dirs_only)
 
     #clear the globals
     path_to_id = {}
