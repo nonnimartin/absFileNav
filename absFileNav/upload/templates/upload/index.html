@@ -42,22 +42,11 @@
     var data = rawdata.replace(/'/g, '"');
     console.log(rawdata);
 
-     $('#jstree_demo_div').jstree({ 'core' : {
-    'data' : data
-} });
 
-    //listen for events EXAMPLE
-/*
-    $('#jstree_demo_div').jstree({ 'core' : {
-    'data' : [
-       { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
-       { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
-       { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
-       { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
-       {"id":"tree1", "text":"upload", "type":"folder", "parent":"#"},
-    ]
+     //build tree based on structure from createtree
+     $('#jstree_demo_div').jstree({ 'core' : {
+    'data' : JSON.parse(data)
 } });
-*/
 
 
    $('button').on('click', function () {

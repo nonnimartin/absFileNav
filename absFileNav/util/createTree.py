@@ -44,6 +44,9 @@ def recurse_children(child_list, counter):
         print('this path = ' + this_path)
         this_dict['parent'] = path_to_id[this_path]
 
+        print('this node finished: ' + str(this_dict))
+        print('=======================================')
+
         #THIS WILL NOT HANDLE ALL CHILDREN
         ##MAYBE GO THROUGH SERIALLY AND POP ITEMS?
         if 'children' in node:
