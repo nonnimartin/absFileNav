@@ -16,39 +16,47 @@ def index(request):
     if request.method == 'POST' and request.FILES['myFile']:
 
         this_form = FileUploadPath(request.POST)
+
+        #initialize path variable
+        path = False
+
         # check whether it's valid:
         if this_form.is_valid():
-            print('it is valid')
-            print(this_form)
-
-        print('This file = ' + str(request.FILES['myFile']))
-        print('This file = ' + str(request))
+            path = this_form.cleaned_data['path']
 
         myfile   = request.FILES['myFile']
 
         #if file is too big chunked will be true, and must be processed in stream
         chunked  = request.FILES['myFile'].multiple_chunks()
-        print('chunked = ' + str(chunked))
 
         if chunked:
             #handle larger file streams here
             pass
 
         else:
-            fs = FileSystemStorage()
-            filename = fs.save(clean_file_name(myfile.name), myfile)
-            uploaded_file_url = fs.url(filename)
+            if path:
+                #save file on hard drive
+                fs = FileSystemStorage(path)
+                filename = fs.save(clean_file_name(myfile.name), myfile)
 
-            # store uploaded file data in db
-            upfile = uploadFile()
-            upfile.name = clean_file_name(filename)
-            upfile.path = settings.MEDIA_ROOT
+                # store uploaded file data in db
+                upfile = uploadFile()
+                upfile.name = clean_file_name(filename)
+                upfile.path = path
+            else:
+                #save file on hard drive on setting media root
+                #should eventually be configurable
+                fs = FileSystemStorage(settings.MEDIA_ROOT)
+
+                filename = fs.save(clean_file_name(myfile.name), myfile)
+
+                # store uploaded file data in db
+                upfile = uploadFile()
+                upfile.name = clean_file_name(filename)
+                #this should eventually be configurable
+                upfile.path = settings.MEDIA_ROOT
 
             upfile.checksum = hash_file(myfile.open())
-
-            # add path by if it's default or chosen file destination
-
-
             # save uploaded file
             upfile.save()
 
@@ -62,7 +70,7 @@ def index(request):
     context = dict()
     context['path_selected']  = False
     context['form'] = pathForm
-    context['json_file_tree'] = createTree.get_tree('.', True)
+    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin/Desktop', True)
 
 
     return HttpResponse(template.render(context, request))

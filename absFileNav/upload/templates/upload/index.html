@@ -25,8 +25,9 @@
         </div>
       </div>
   </div>
+    <div class="file-upload" style="">Pick your upload folder</div>
         {{ form.path.as_hidden}}
-        <div id="jstree_demo_div"></div>
+    <div class="file-upload" id="jstree_demo_div"></div>
 </form>
 
 
@@ -49,7 +50,6 @@
     $('#jstree_demo_div').on("changed.jstree", function (e, data) {
        selected = data.node.original.fullPath;
        document.getElementById('id_path').value = selected;
-       console.log('selected path = ' + selected.toString());
    });
 
 </script>
