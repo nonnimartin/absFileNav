@@ -15,6 +15,7 @@ def index(request):
     if request.method == 'POST' and request.FILES['myFile']:
 
         this_form = FileUploadPath(request.POST)
+        files_list = request.FILES.getlist('myFile')
 
         #initialize path variable
         path = False
@@ -22,51 +23,56 @@ def index(request):
         # check whether it's valid:
         if this_form.is_valid():
             path = this_form.cleaned_data['path']
+            print('this form cleaned = ' + str(this_form.cleaned_data))
 
-        myfile   = request.FILES['myFile']
+        print('files list = ' + str(files_list))
 
-        #if file is too big chunked will be true, and must be processed in stream
-        chunked  = request.FILES['myFile'].multiple_chunks()
+        for this_file in files_list:
 
-        if chunked:
-            #handle larger file streams here
-            newPath = str(path) + '/' + str(replace_spaces(myfile.name))
-            with open(newPath, 'wb+') as destination:
-                for chunk in myfile.chunks():
-                    destination.write(chunk)
+            print('this file = ' + str(this_file))
 
-            destination.close()
+            try:
 
-            payload = {'success': True}
-            return HttpResponse(json.dumps(payload), content_type='application/json')
+                if path:
+                    # store uploaded file data in db
+                    upfile = uploadFile()
+                    upfile.name = this_file.file.name
+                    upfile.path = path
+                else:
+                    # save file on hard drive on setting media root
+                    # should eventually be configurable
 
-        else:
-            if path:
-                #save file on hard drive
-                fs = FileSystemStorage(path)
-                filename = fs.save(clean_file_name(myfile.name), myfile)
+                    path = settings.MEDIA_ROOT
 
-                # store uploaded file data in db
-                upfile = uploadFile()
-                upfile.name = clean_file_name(filename)
-                upfile.path = path
-            else:
-                #save file on hard drive on setting media root
-                #should eventually be configurable
-                fs = FileSystemStorage(settings.MEDIA_ROOT)
-                filename = fs.save(clean_file_name(myfile.name), myfile)
+                    fs = FileSystemStorage(settings.MEDIA_ROOT)
+                    filename = fs.save(clean_file_name(this_file.name), this_file)
 
-                # store uploaded file data in db
-                upfile = uploadFile()
-                upfile.name = clean_file_name(filename)
-                #this should eventually be configurable
-                upfile.path = settings.MEDIA_ROOT
+                    # store uploaded file data in db
+                    upfile = uploadFile()
+                    upfile.name = clean_file_name(filename)
+                    # this should eventually be configurable
+                    upfile.path = path
 
-            upfile.checksum = hash_file(myfile.open())
+                newPath = str(path) + '/' + str(replace_spaces(this_file.name))
+                print('Writing to path: ' + newPath)
+
+                #open and write file
+                with open(newPath, 'wb+') as destination:
+                    for chunk in this_file.chunks():
+                        destination.write(chunk)
+
+                destination.close()
+
+            except Exception as e:
+                # get line number and error message
+                print('Error writing file: ' + str(e))
+
+
+            upfile.checksum = hash_file(this_file.open())
             # save uploaded file
             upfile.save()
-            payload = {'success': True}
-            return HttpResponse(json.dumps(payload), content_type='application/json')
+        payload = {'success': True}
+        return HttpResponse(json.dumps(payload), content_type='application/json')
 
     #file upload path form
     pathForm = FileUploadPath()

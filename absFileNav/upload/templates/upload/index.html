@@ -11,7 +11,7 @@
       <button type="button" id="main-button" class="file-upload-btn" disabled>Upload A File</button>
 
       <div class="image-upload-wrap">
-        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile"/>
+        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
         <div class="drag-text">
           <h3>Drag and drop a file to Upload</h3>
         </div>
@@ -105,12 +105,18 @@ $('.image-upload-wrap').bind('dragover', function () {
 
 
 $( "#main-button" ).click(function(e) {
+  var uploadBar = $("#uploadBar");
+  //get the input and UL list
+  var input = document.getElementById('uploadBar');
+  console.log('input = ' + JSON.stringify(input));
+  var list = document.getElementById('fileList');
   upload(e);
 });
 
 function upload(event) {
 	event.preventDefault();
 	var data = new FormData($('#uploadForm').get(0));
+    var thisForm = new FormData($('#uploadForm').get(0));
 	$('.loader').show();
 
 	$.ajax({

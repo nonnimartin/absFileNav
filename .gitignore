@@ -1,1 +1,4 @@
 usefulCommands
+absFileNav/db.sqlite3
+.gitignore
+absFileNav/files/*
