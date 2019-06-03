@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/absFileNav/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -332,10 +329,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="7" y="44" width="1117" height="917" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" weight="0.32969698" />
