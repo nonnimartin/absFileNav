@@ -8,6 +8,7 @@ rec_count  = 0
 recurse_children = list()
 
 def path_hierarchy(path):
+
     #get file system represented as a hierarchy
     hierarchy = {
         'type': 'folder',
@@ -26,7 +27,6 @@ def path_hierarchy(path):
         hierarchy['type'] = 'file'
 
     return hierarchy
-
 
 def recurse_tree(node_list, dirs_only):
 

@@ -8,10 +8,9 @@ import hashlib
 from functools import partial
 from util import createTree
 from forms import FileUploadPath
+import json
 
 def index(request):
-
-    #print('content_params = ' + str(form))
 
     if request.method == 'POST' and request.FILES['myFile']:
 
@@ -36,6 +35,10 @@ def index(request):
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
+            destination.close()
+
+            payload = {'success': True}
+            return HttpResponse(json.dumps(payload), content_type='application/json')
 
         else:
             if path:
@@ -51,7 +54,6 @@ def index(request):
                 #save file on hard drive on setting media root
                 #should eventually be configurable
                 fs = FileSystemStorage(settings.MEDIA_ROOT)
-
                 filename = fs.save(clean_file_name(myfile.name), myfile)
 
                 # store uploaded file data in db
@@ -63,6 +65,8 @@ def index(request):
             upfile.checksum = hash_file(myfile.open())
             # save uploaded file
             upfile.save()
+            payload = {'success': True}
+            return HttpResponse(json.dumps(payload), content_type='application/json')
 
     #file upload path form
     pathForm = FileUploadPath()

@@ -5,10 +5,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 {% block content %}
 
-<form method="post" enctype="multipart/form-data" action="/upload/">
+<form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <div class="file-upload">
-      <button id="main-button" class="file-upload-btn" type="submit" disabled>Upload A File</button>
+      <button type="button" id="main-button" class="file-upload-btn" disabled>Upload A File</button>
 
       <div class="image-upload-wrap">
         <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile"/>
@@ -20,7 +20,7 @@
           <br>
           <br>
 
-        <div class="image-title-wrap">
+        <div id='removeBar' class="image-title-wrap">
           <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File</span></button>
         </div>
       </div>
@@ -30,8 +30,10 @@
     <div class="file-upload" id="jstree_demo_div"></div>
 </form>
 
+<div class="loader" hidden>Loading...</div>
 
-  {% if uploaded_file_url %}
+
+{% if uploaded_file_url %}
     <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
   {% endif %}
 
@@ -100,4 +102,56 @@ $('.image-upload-wrap').bind('dragover', function () {
     $('.image-upload-wrap').bind('dragleave', function () {
         $('.image-upload-wrap').removeClass('image-dropping');
 });
+
+
+$( "#main-button" ).click(function(e) {
+  upload(e);
+});
+
+function upload(event) {
+	event.preventDefault();
+	var data = new FormData($('#uploadForm').get(0));
+	$('.loader').show();
+
+	$.ajax({
+	    method:'POST',
+	    url: $(this).attr('action'),
+	    type: $(this).attr('method'),
+	    data: data,
+	    cache: false,
+	    processData: false,
+	    contentType: false,
+	    success: function(data) {
+	        $('.loader').hide();
+	        $('#removeBar').hide();
+	        $('.image-upload-wrap').show();
+	    },
+	    dataType:'text',
+	    progress: function(e) {
+        //make sure we can compute the length
+        if(e.lengthComputable) {
+            //calculate the percentage loaded
+            var pct = (e.loaded / e.total) * 100;
+
+            //log percentage loaded
+            console.log(pct);
+        }
+        //this usually happens when Content-Length isn't set
+        else {
+            console.log('Content Length not reported!');
+        }
+    }
+	}).done(function (e) {
+    // Do something
+
+    });
+	return false;
+}
+
+$(function() {
+    $('uploadForm').submit(upload);
+});
+
+
+
 </script>
