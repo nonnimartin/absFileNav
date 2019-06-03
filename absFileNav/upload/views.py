@@ -23,9 +23,6 @@ def index(request):
         # check whether it's valid:
         if this_form.is_valid():
             path = this_form.cleaned_data['path']
-            print('this form cleaned = ' + str(this_form.cleaned_data))
-
-        print('files list = ' + str(files_list))
 
         for this_file in files_list:
 
@@ -36,7 +33,9 @@ def index(request):
                 if path:
                     # store uploaded file data in db
                     upfile = uploadFile()
-                    upfile.name = this_file.file.name
+                    print('got here')
+                    upfile.name = str(this_file)
+                    print('got here 2')
                     upfile.path = path
                 else:
                     # save file on hard drive on setting media root
@@ -66,6 +65,8 @@ def index(request):
             except Exception as e:
                 # get line number and error message
                 print('Error writing file: ' + str(e))
+                payload = {'success': False, 'error' : str(e)}
+                return HttpResponse(json.dumps(payload), content_type='application/json')
 
 
             upfile.checksum = hash_file(this_file.open())
