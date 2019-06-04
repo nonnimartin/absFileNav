@@ -12,8 +12,8 @@
 
       <div class="image-upload-wrap">
         <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
-        <div class="drag-text">
-          <h3>Drag and drop a file to Upload</h3>
+        <div class="button" id="inner-button">
+          <div>Drag and drop a file to Upload</div>
         </div>
       </div>
       <div class="file-upload-content">
@@ -25,7 +25,8 @@
         </div>
       </div>
   </div>
-    <div class="file-upload" style="">Pick your upload folder</div>
+    <hr>
+    <div class="file-upload" style="">Set your upload folder</div>
         {{ form.path.as_hidden}}
     <div class="file-upload" id="jstree_demo_div"></div>
 </form>
@@ -42,13 +43,15 @@
 <script type="text/javascript">
 
     var rawdata = "{{ json_file_tree|escapejs }}"
-    var data = rawdata.replace(/'/g, '"');
+    var data    = rawdata.replace(/'/g, '"');
 
     //build tree based on structure from createtree
     $('#jstree_demo_div').jstree({ 'core' : {
     'data' : JSON.parse(data)
     } });
 
+
+    //select folder from file tree
     $('#jstree_demo_div').on("changed.jstree", function (e, data) {
        selected = data.node.original.fullPath;
        document.getElementById('id_path').value = selected;

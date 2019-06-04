@@ -33,9 +33,7 @@ def index(request):
                 if path:
                     # store uploaded file data in db
                     upfile = uploadFile()
-                    print('got here')
                     upfile.name = str(this_file)
-                    print('got here 2')
                     upfile.path = path
                 else:
                     # save file on hard drive on setting media root
@@ -63,9 +61,9 @@ def index(request):
                 destination.close()
 
             except Exception as e:
-                # get line number and error message
+                # get error message
                 print('Error writing file: ' + str(e))
-                payload = {'success': False, 'error' : str(e)}
+                payload = {'success': False, 'error': str(e)}
                 return HttpResponse(json.dumps(payload), content_type='application/json')
 
 
