@@ -9,6 +9,44 @@ from functools import partial
 from util import createTree
 from forms import FileUploadPath
 import json
+import os, errno
+
+def new_path(request):
+    if request.method == 'POST':
+        body_string = request.body
+        body        = json.loads(body_string)
+        new_path = body['newPath']
+
+        #write new directory to file system
+        new_dir = create_dir(new_path)
+
+        if new_dir:
+            return HttpResponse({'success'}, content_type='application/json')
+        else:
+            failure_response = HttpResponse()
+            failure_response.status_code = 500
+            return failure_response
+    else:
+        return HttpResponse('{}', content_type='application/json')
+
+def delete_path(request):
+    if request.method == 'POST':
+        body_string = request.body
+        body        = json.loads(body_string)
+        delete_path = body['delete_path']
+
+        #write new directory to file system
+        #delete_path = create_dir(delete_path)
+
+        if new_dir:
+            return HttpResponse({'success'}, content_type='application/json')
+        else:
+            failure_response = HttpResponse()
+            failure_response.status_code = 500
+            return failure_response
+    else:
+        return HttpResponse('{}', content_type='application/json')
+
 
 def index(request):
 
@@ -88,12 +126,23 @@ def index(request):
 
     return HttpResponse(template.render(context, request))
 
-def replace_spaces(thisString):
-    return thisString.replace(' ', '_')
+def replace_spaces(this_string):
+    return this_string.replace(' ', '_')
 
-def clean_file_name(fileName):
-    thisString = replace_spaces(fileName)
+def clean_file_name(file_name):
+    thisString = replace_spaces(file_name)
     return thisString
+
+def create_dir(dir_path):
+    try:
+        os.makedirs(dir_path)
+        return True
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+def delete_path(path):
+    print('delete path = ' + path)
 
 def hash_file(file, block_size=65536):
     hasher = hashlib.md5()
