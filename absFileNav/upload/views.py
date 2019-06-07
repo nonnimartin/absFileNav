@@ -10,6 +10,7 @@ from util import createTree
 from forms import FileUploadPath
 import json
 import os, errno
+import upload_forms
 
 def new_path(request):
     if request.method == 'POST':
@@ -121,10 +122,14 @@ def index(request):
     context = dict()
     context['path_selected']  = False
     context['form'] = pathForm
-    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin/Desktop', True)
+    context['json_file_tree'] = createTree.get_tree('/home/jon/Desktop', True)
 
 
     return HttpResponse(template.render(context, request))
+
+def user_settings(request):
+    user_settings = UserSettings()
+    return HttpResponse(user_settings)
 
 def replace_spaces(this_string):
     return this_string.replace(' ', '_')
@@ -142,6 +147,7 @@ def create_dir(dir_path):
             raise
 
 def delete_path(path):
+    #add logic for deleting files/dirs carefully
     print('delete path = ' + path)
 
 def hash_file(file, block_size=65536):
