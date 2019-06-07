@@ -8,12 +8,12 @@
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <div class="file-upload">
-      <button type="button" id="main-button" class="file-upload-btn" disabled>Upload A File</button>
+      <button type="button" id="main-button" class="file-upload-btn" disabled>Upload</button>
 
       <div class="image-upload-wrap">
         <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
         <div class="button" id="inner-button">
-          <div>Drag and drop a file to Upload</div>
+          <div>Drag and drop a file/s to Upload</div>
         </div>
       </div>
       <div class="file-upload-content">
@@ -21,7 +21,7 @@
           <br>
 
         <div id='removeBar' class="image-title-wrap">
-          <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File</span></button>
+          <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File/s</span></button>
         </div>
       </div>
   </div>
