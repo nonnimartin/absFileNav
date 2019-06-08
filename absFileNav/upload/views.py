@@ -10,7 +10,7 @@ from util import createTree
 from forms import FileUploadPath
 import json
 import os, errno
-import upload_forms
+from upload.upload_forms import SettingsForm
 
 def new_path(request):
     if request.method == 'POST':
@@ -128,8 +128,13 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 def user_settings(request):
-    user_settings = UserSettings()
-    return HttpResponse(user_settings)
+    user_settings = SettingsForm()
+    print(user_settings)
+    context         = dict()
+    context['form'] = user_settings
+    template = loader.get_template('user_settings/index.html')
+    print(user_settings)
+    return HttpResponse(template.render(context, request))
 
 def replace_spaces(this_string):
     return this_string.replace(' ', '_')

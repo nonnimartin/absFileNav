@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/absFileNav.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/absFileNav.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/absFileNav/upload/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,20 +14,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
+              <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="44" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/upload_forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="40" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
+            <state relative-caret-position="30">
+              <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -50,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="90">
+              <caret line="6" column="10" lean-forward="true" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -144,11 +138,11 @@
         <option value="$PROJECT_DIR$/absFileNav/upload/templates/settings/index.html" />
         <option value="$PROJECT_DIR$/absFileNav/upload/urls.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/models.py" />
+        <option value="$PROJECT_DIR$/absFileNav/upload/forms.py" />
         <option value="$PROJECT_DIR$/absFileNav/absFileNav/settings.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" />
-        <option value="$PROJECT_DIR$/absFileNav/upload/forms.py" />
-        <option value="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" />
         <option value="$PROJECT_DIR$/absFileNav/upload/views.py" />
+        <option value="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" />
       </list>
     </option>
   </component>
@@ -187,13 +181,6 @@
               <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
               <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
               <item name="upload" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="absFileNav" type="b2602c69:ProjectViewProjectNode" />
-              <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
-              <item name="absFileNav" type="462c0819:PsiDirectoryNode" />
-              <item name="upload" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -379,31 +366,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="41" lean-forward="true" selection-end-line="229" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="23" lean-forward="true" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="40" column="15" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -414,17 +380,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absFileNav/upload/upload_forms.py">
+    <entry file="file://$PROJECT_DIR$/absFileNav/absFileNav/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="40" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
+        <state relative-caret-position="177">
+          <caret line="40" column="17" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="41" lean-forward="true" selection-end-line="229" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="10" lean-forward="true" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
+          <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/absFileNav/upload/upload_forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
         </state>
       </provider>
     </entry>
