@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'absFileNav.urls'
 
 #default file location for saved files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
+MEDIA_ROOT = '/Users/jonathanmartin/Desktop'
 
 TEMPLATES = [
     {

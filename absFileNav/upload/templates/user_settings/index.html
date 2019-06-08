@@ -23,6 +23,12 @@
     //make base url read only
     $("#id_base_folder").prop("readonly", true);
 
+    //set base folder input value
+    $("#id_base_folder").val("{{base_folder}}");
+
+    //set checkbox for show files value
+    //$("#id_show_files").val("{{show_files}}");
+
     var rawdata = "{{ json_file_tree|escapejs }}"
     var data    = rawdata.replace(/'/g, '"');
 

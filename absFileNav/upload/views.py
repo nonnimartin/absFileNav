@@ -13,6 +13,7 @@ import json
 import os, errno
 from upload.upload_forms import SettingsForm
 from django.shortcuts import redirect
+from django.utils import timezone
 
 def new_path(request):
     if request.method == 'POST':
@@ -131,20 +132,29 @@ def index(request):
 
 def user_settings(request):
 
+    stored_settings     = UserSettings.objects.all()
+    has_stored_settings = True if len(stored_settings) > 0 else False
+
     if request.method == 'POST':
 
         base_folder = str()
-        show_files  = False
+        show_files  = bool()
 
         base_folder = request.POST['base_folder']
         if 'show_files' in request.POST.keys():
             show_files = request.POST['show_files']
+            print('show files in here ' + show_files)
             if show_files == 'on':
                 show_files = True
 
+        print('post base folder = ' + base_folder)
+
         save_settings = UserSettings()
+        save_settings.id = 1
         save_settings.show_files  = show_files
         save_settings.base_folder = base_folder
+        save_settings.last_modified = timezone.now()
+        print('save settings show files = ' + str(save_settings.show_files))
 
         try:
             save_settings.save()
@@ -154,7 +164,16 @@ def user_settings(request):
 
     user_settings = SettingsForm()
     context         = dict()
-    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin//Desktop', True)
+
+    if has_stored_settings:
+        #if has stored settings, retrieve them
+        stored_settings               = stored_settings[0]
+        context['base_folder']        = stored_settings.base_folder
+        context['show_files']         = stored_settings.show_files
+    else:
+        context['show_files']  = False
+
+    context['json_file_tree'] = createTree.get_tree(settings.MEDIA_ROOT, True)
     context['form'] = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
