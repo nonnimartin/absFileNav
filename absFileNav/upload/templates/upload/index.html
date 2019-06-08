@@ -5,10 +5,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 {% block content %}
 
+<button type="button" id="settings-button" style="position:absolute; top:6; right:6;" onclick="window.location.href='/upload/user_settings'">Settings</button>
+
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <div class="file-upload">
-      <button type="button" id="main-button" class="file-upload-btn" disabled>Upload</button>
+      <button type="button" id="main-button" disabled>Upload</button>
 
       <div class="image-upload-wrap">
         <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>

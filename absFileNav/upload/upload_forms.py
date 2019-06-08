@@ -1,5 +1,5 @@
 from django import forms
 
-class SettingsForm(forms.ModelForm):
-    forms.CharField(label='Base Folder', max_length=4096)
-    forms.BooleanField(label='Show Files')
+class SettingsForm(forms.Form):
+    base_folder = forms.CharField(label='Base Folder ', max_length=4096)
+    show_files  = forms.BooleanField(label='Show Files')

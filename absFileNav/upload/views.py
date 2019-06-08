@@ -122,18 +122,20 @@ def index(request):
     context = dict()
     context['path_selected']  = False
     context['form'] = pathForm
-    context['json_file_tree'] = createTree.get_tree('/home/jon/Desktop', True)
+    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin//Desktop', True)
 
 
     return HttpResponse(template.render(context, request))
 
 def user_settings(request):
+
+    if request.method == 'POST':
+       print('this post = ' + str(request.POST))
+
     user_settings = SettingsForm()
-    print(user_settings)
     context         = dict()
     context['form'] = user_settings
     template = loader.get_template('user_settings/index.html')
-    print(user_settings)
     return HttpResponse(template.render(context, request))
 
 def replace_spaces(this_string):
