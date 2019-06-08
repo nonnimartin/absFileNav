@@ -134,6 +134,7 @@ def user_settings(request):
 
     user_settings = SettingsForm()
     context         = dict()
+    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin//Desktop', True)
     context['form'] = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))

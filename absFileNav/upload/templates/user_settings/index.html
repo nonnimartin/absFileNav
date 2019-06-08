@@ -1,12 +1,65 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'upload/style.css' %}">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
 <h1>Settings</h1>
 <hr>
 <form action="user_settings" method="post">
     {% csrf_token %}
+    <div class="file-upload" style="">Set your base folder</div>
+        {{ form.path.as_hidden}}
+    <div class="file-upload" id="jstree_demo_div"></div>
+    <hr>
     {{form.as_p}}
-    <input type="submit" value="Submit">
+    <input type="submit" value="Save Settings">
 </form>
+
+<script type="text/javascript">
+
+    var rawdata = "{{ json_file_tree|escapejs }}"
+    console.log('raw data ' + rawdata);
+    var data    = rawdata.replace(/'/g, '"');
+
+    //build tree based on structure from createtree
+    $('#jstree_demo_div').jstree({ 'core' : {
+    'data' : JSON.parse(data)
+    } });
+
+
+    //select folder from file tree
+    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+       //set selected path
+       selected = data.node.original.fullPath;
+       //show add button when folder is chosen
+       addButton.show();
+       document.getElementById('id_path').value = selected;
+       console.log(document.getElementById('uploadBar'));
+    });
+
+ function readURL(input) {
+  if (input.files && input.files[0]) {
+
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      $('.image-upload-wrap').hide();
+
+      $('.file-upload-image').attr('src', e.target.result);
+      $('.file-upload-content').show();
+
+      $('.image-title').html(input.files[0].name);
+    };
+
+    reader.readAsDataURL(input.files[0]);
+    enableButton()
+
+  } else {
+    removeUpload();
+  }
+}
+</script>
 
 
