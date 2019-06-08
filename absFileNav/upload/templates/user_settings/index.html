@@ -19,8 +19,10 @@
 
 <script type="text/javascript">
 
+    //make base url read only
+    $("#id_base_folder").prop("readonly", true);
+
     var rawdata = "{{ json_file_tree|escapejs }}"
-    console.log('raw data ' + rawdata);
     var data    = rawdata.replace(/'/g, '"');
 
     //build tree based on structure from createtree
@@ -33,10 +35,9 @@
     $('#jstree_demo_div').on("changed.jstree", function (e, data) {
        //set selected path
        selected = data.node.original.fullPath;
+       console.log('selected = ' + selected);
        //show add button when folder is chosen
-       addButton.show();
-       document.getElementById('id_path').value = selected;
-       console.log(document.getElementById('uploadBar'));
+       document.getElementById('id_base_folder').value = selected;
     });
 
  function readURL(input) {

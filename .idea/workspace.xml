@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a1588241-01a3-4380-b7c5-b8175ab7a295" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/upload_forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/absFileNav/upload/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/absFileNav/upload/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,13 +26,13 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="html" value="276" />
+          <entry key="html" value="352" />
           <entry key="py" value="117" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="276" />
+          <entry key="HTML" value="352" />
           <entry key="Python" value="117" />
         </counts>
       </usages-collector>
@@ -58,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" selection-start-line="2" selection-end-line="4" selection-end-column="89" />
+            <state relative-caret-position="391">
+              <caret line="61" lean-forward="true" selection-start-line="61" selection-end-line="61" />
               <folding>
                 <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -71,7 +69,7 @@
         <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="210">
-              <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+              <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
             </state>
           </provider>
         </entry>
@@ -112,9 +110,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>counter</find>
-      <find>identi</find>
-      <find>upload</find>
       <find>fs</find>
       <find>activate</find>
       <find>render</find>
@@ -142,6 +137,9 @@
       <find>csrf</find>
       <find>tree</find>
       <find>json_file</find>
+      <find>addButton</find>
+      <find>addbutton</find>
+      <find>id_path</find>
     </findStrings>
     <replaceStrings>
       <replace>clean_file_name</replace>
@@ -466,8 +464,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/upload/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="4" selection-end-column="89" />
+        <state relative-caret-position="391">
+          <caret line="61" lean-forward="true" selection-start-line="61" selection-end-line="61" />
           <folding>
             <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
           </folding>
@@ -477,7 +475,7 @@
     <entry file="file://$PROJECT_DIR$/absFileNav/upload/templates/user_settings/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
-          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
         </state>
       </provider>
     </entry>
