@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from .models import uploadFile
+from .models import UserSettings
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import hashlib
@@ -11,6 +12,7 @@ from forms import FileUploadPath
 import json
 import os, errno
 from upload.upload_forms import SettingsForm
+from django.shortcuts import redirect
 
 def new_path(request):
     if request.method == 'POST':
@@ -130,7 +132,25 @@ def index(request):
 def user_settings(request):
 
     if request.method == 'POST':
-       print('this post = ' + str(request.POST))
+
+        base_folder = str()
+        show_files  = False
+
+        base_folder = request.POST['base_folder']
+        if 'show_files' in request.POST.keys():
+            show_files = request.POST['show_files']
+            if show_files == 'on':
+                show_files = True
+
+        save_settings = UserSettings()
+        save_settings.show_files  = show_files
+        save_settings.base_folder = base_folder
+
+        try:
+            save_settings.save()
+            return redirect('/upload/')
+        except Exception as e:
+            print('Error saving settings: ' + str(e))
 
     user_settings = SettingsForm()
     context         = dict()
