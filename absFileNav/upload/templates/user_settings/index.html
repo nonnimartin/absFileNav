@@ -32,6 +32,12 @@
     var rawdata = "{{ json_file_tree|escapejs }}"
     var data    = rawdata.replace(/'/g, '"');
 
+    //mark checkbox
+    if ("{{show_files}}" == 'True'){
+      $("#id_show_files").prop( "checked", true );
+    }
+
+
     //build tree based on structure from createtree
     $('#jstree_demo_div').jstree({ 'core' : {
     'data' : JSON.parse(data)

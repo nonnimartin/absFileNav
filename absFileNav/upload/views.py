@@ -169,6 +169,7 @@ def user_settings(request):
         #if has stored settings, retrieve them
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
+        print('show files ' + str(stored_settings.show_files))
         context['show_files']         = stored_settings.show_files
     else:
         context['show_files']  = False
