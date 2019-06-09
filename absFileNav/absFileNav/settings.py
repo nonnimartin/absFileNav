@@ -25,7 +25,7 @@ SECRET_KEY = '1$ely(jm&@m#___)rnr+o7y91!!_z0oxv)1cggav*4t-^3&v=h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gudrun', 'localhost']
 
 
 # Application definition
@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'absFileNav.urls'
 
 #default file location for saved files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
+MEDIA_ROOT = '/Users/jonathanmartin/Desktop'
 
 TEMPLATES = [
     {

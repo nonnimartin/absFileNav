@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from .models import uploadFile
+from .models import UserSettings
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import hashlib
@@ -10,6 +11,9 @@ from util import createTree
 from forms import FileUploadPath
 import json
 import os, errno
+from upload.upload_forms import SettingsForm
+from django.shortcuts import redirect
+from django.utils import timezone
 
 def new_path(request):
     if request.method == 'POST':
@@ -121,9 +125,58 @@ def index(request):
     context = dict()
     context['path_selected']  = False
     context['form'] = pathForm
-    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin/Desktop', True)
+    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin//Desktop', True)
 
 
+    return HttpResponse(template.render(context, request))
+
+def user_settings(request):
+
+    stored_settings     = UserSettings.objects.all()
+    has_stored_settings = True if len(stored_settings) > 0 else False
+
+    if request.method == 'POST':
+
+        base_folder = str()
+        show_files  = bool()
+
+        base_folder = request.POST['base_folder']
+        if 'show_files' in request.POST.keys():
+            show_files = request.POST['show_files']
+            print('show files in here ' + show_files)
+            if show_files == 'on':
+                show_files = True
+
+        print('post base folder = ' + base_folder)
+
+        save_settings = UserSettings()
+        save_settings.id = 1
+        save_settings.show_files  = show_files
+        save_settings.base_folder = base_folder
+        save_settings.last_modified = timezone.now()
+        print('save settings show files = ' + str(save_settings.show_files))
+
+        try:
+            save_settings.save()
+            return redirect('/upload/')
+        except Exception as e:
+            print('Error saving settings: ' + str(e))
+
+    user_settings = SettingsForm()
+    context         = dict()
+
+    if has_stored_settings:
+        #if has stored settings, retrieve them
+        stored_settings               = stored_settings[0]
+        context['base_folder']        = stored_settings.base_folder
+        print('show files ' + str(stored_settings.show_files))
+        context['show_files']         = stored_settings.show_files
+    else:
+        context['show_files']  = False
+
+    context['json_file_tree'] = createTree.get_tree(settings.MEDIA_ROOT, True)
+    context['form'] = user_settings
+    template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
 
 def replace_spaces(this_string):
@@ -142,6 +195,7 @@ def create_dir(dir_path):
             raise
 
 def delete_path(path):
+    #add logic for deleting files/dirs carefully
     print('delete path = ' + path)
 
 def hash_file(file, block_size=65536):
