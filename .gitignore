@@ -4,3 +4,4 @@ absFileNav/db.sqlite3
 absFileNav/files/*
 absFileNav/db.sqlite3
 db.sqlite3
+absFileNav/absFileNav/config.json
