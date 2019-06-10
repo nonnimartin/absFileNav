@@ -7,3 +7,5 @@ db.sqlite3
 absFileNav/absFileNav/config.json
 absFileNav/absFileNav/config.json
 absFileNav/db.sqlite3
+.*
+!/.gitignore
