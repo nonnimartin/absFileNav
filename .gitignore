@@ -5,3 +5,5 @@ absFileNav/files/*
 absFileNav/db.sqlite3
 db.sqlite3
 absFileNav/absFileNav/config.json
+absFileNav/absFileNav/config.json
+absFileNav/db.sqlite3

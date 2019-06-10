@@ -21,5 +21,5 @@ urlpatterns = [
     path('upload/', include('upload.urls')),
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url="/upload/")),
-    path('/', RedirectView.as_view(url="/upload/")),
+    path('', RedirectView.as_view(url="/upload/")),
 ]

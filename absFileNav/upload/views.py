@@ -78,12 +78,12 @@ def index(request):
                     upfile.name = str(this_file)
                     upfile.path = path
                 else:
-                    # save file on hard drive on setting media root
+                    # save file on hard drive on setting FILE_SYSTEM_ROOT
                     # should eventually be configurable
 
                     path = settings.MEDIA_ROOT
 
-                    fs = FileSystemStorage(settings.MEDIA_ROOT)
+                    fs = FileSystemStorage(settings.FILE_SYSTEM_ROOT)
                     filename = fs.save(clean_file_name(this_file.name), this_file)
 
                     # store uploaded file data in db
@@ -125,7 +125,7 @@ def index(request):
     context = dict()
     context['path_selected']  = False
     context['form'] = pathForm
-    context['json_file_tree'] = createTree.get_tree('/Users/jonathanmartin//Desktop', True)
+    context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
 
 
     return HttpResponse(template.render(context, request))
@@ -174,7 +174,7 @@ def user_settings(request):
     else:
         context['show_files']  = False
 
-    context['json_file_tree'] = createTree.get_tree(settings.MEDIA_ROOT, True)
+    context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
     context['form'] = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
