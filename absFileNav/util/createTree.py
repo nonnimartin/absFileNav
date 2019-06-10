@@ -41,6 +41,9 @@ def recurse_tree(node_list, dirs_only):
         #do not include files if dirs_only is true
         if dirs_only and item['type'] == 'file':
             continue
+        #ignore hidden files
+        if item['name'].startswith('.'):
+            continue
 
         this_dict = dict()
         rec_count += 1
@@ -83,4 +86,3 @@ def get_tree(path, dirs_only):
     recurse_children = list()
 
     return json.dumps(end_dict)
-

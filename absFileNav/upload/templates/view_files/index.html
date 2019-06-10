@@ -5,14 +5,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
-<h1>File System</h1>
+<h1>Settings</h1>
 <hr>
 <form action="user_settings" method="post">
     {% csrf_token %}
-    <div class="file-upload" style="">File system</div>
+    <div class="file-upload" style="">Set your base folder</div>
         {{ form.path.as_hidden}}
     <div class="file-upload" id="jstree_demo_div"></div>
     <hr>
+    {{form.as_p}}
+    <input type="submit" value="Save Settings">
+    <input type="button" value="Cancel" onclick="window.location.href='/upload/'">
 </form>
 
 <script type="text/javascript">
