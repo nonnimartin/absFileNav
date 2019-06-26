@@ -18,7 +18,7 @@ from django.utils import timezone
 def new_path(request):
     if request.method == 'POST':
         body_string = request.body
-        body        = json.loads(body_string)
+        body        = json.loads(body_string.decode('utf-8'))
         new_path = body['newPath']
 
         #write new directory to file system
