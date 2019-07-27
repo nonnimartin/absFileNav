@@ -120,12 +120,15 @@ $('.image-upload-wrap').bind('dragover', function () {
 
 
 $( "#main-button" ).click(function(e) {
-  var uploadBar = $("#uploadBar");
+  var uploadBar = $("#uploadBarChunked");
   //get the input and UL list
-  var input = document.getElementById('uploadBar');
+  var input = document.getElementById('uploadBarChunked');
   console.log('input = ' + JSON.stringify(input));
   var list = document.getElementById('fileList');
-  upload(e);
+
+
+  //REMOVED THIS FOR TEST!!!!!!!!!!
+  //upload(e);
 });
 
 //handle adding a folder
