@@ -1,6 +1,6 @@
 from django.views.generic.base import TemplateView
 
-from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
+from absFileNav.absFileNav.chunk_uploads import ChunkedUploadView, ChunkedUploadCompleteView
 
 from .models import MyChunkedUpload
 
