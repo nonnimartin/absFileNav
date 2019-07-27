@@ -13,7 +13,7 @@
       <button type="button" id="main-button" disabled>Upload</button>
 
       <div class="image-upload-wrap">
-        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
+        <input id="uploadBarChunked" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
         <div class="button" id="inner-button">
           <div>Drag and drop a file/s to Upload</div>
         </div>
@@ -254,7 +254,7 @@ $(function() {
       };
       read_next_chunk();
     }
-    $("#uploadBar").fileupload({
+    $("#uploadBarChunked").fileupload({
       url: "{% url 'api_chunked_upload' %}",
       dataType: "json",
       maxChunkSize: 100000, // Chunks of 100 kB
