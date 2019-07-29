@@ -1,8 +1,18 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'upload/style.css' %}">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+<!-- chunked upload static files -->
+<script src="/static/js/jquery.ui.widget.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="/static/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="/static/js/jquery.fileupload.js"></script>
+<!-- Calculate md5 -->
+<script src="/static/js/spark-md5.js"></script>
+
 {% block content %}
 
 <button type="button" id="settings-button" style="position:absolute; top:6; right:6;" onclick="window.location.href='/upload/user_settings'">Settings</button>
@@ -37,6 +47,7 @@
 
 <!-- loading animation -->
 <div class="loader" hidden>Loading...</div>
+<div id="messages"></div>
 
 
 {% if uploaded_file_url %}
@@ -126,7 +137,7 @@ $( "#main-button" ).click(function(e) {
   console.log('input = ' + JSON.stringify(input));
   var list = document.getElementById('fileList');
 
-
+  uploadChunked(e);
   //REMOVED THIS FOR TEST!!!!!!!!!!
   //upload(e);
 });
@@ -232,8 +243,9 @@ $(function() {
 
 //chunked_upload code
     var md5 = "",
-        csrf = $("input[name='csrfmiddlewaretoken']")[0].value,
+        csrf = $('{% csrf_token %}')[0].value,
         form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
+
     function calculate_md5(file, chunk_size) {
       var slice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
           chunks = chunks = Math.ceil(file.size / chunk_size),
@@ -248,6 +260,7 @@ $(function() {
           md5 = spark.end();
         }
       };
+
       function read_next_chunk() {
         var reader = new FileReader();
         reader.onload = onload;
@@ -257,7 +270,13 @@ $(function() {
       };
       read_next_chunk();
     }
-    $("#uploadBarChunked").fileupload({
+
+
+      console.log('upload chunked');
+      console.log(csrf);
+      console.log('attempted url = ' + "{% url 'api_chunked_upload' %}");
+
+      $("#uploadBarChunked").fileupload({
       url: "{% url 'api_chunked_upload' %}",
       dataType: "json",
       maxChunkSize: 100000, // Chunks of 100 kB
@@ -267,6 +286,7 @@ $(function() {
         // If this is the second file you're uploading we need to remove the
         // old upload_id and just keep the csrftoken (which is always first).
         form_data.splice(1);
+        console.log('got here in add');
         calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
         data.submit();
       },
@@ -281,6 +301,7 @@ $(function() {
         $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
       },
       done: function (e, data) { // Called when the file has completely uploaded
+        console.log('in done function');
         $.ajax({
           type: "POST",
           url: "{% url 'api_chunked_upload_complete' %}",
@@ -296,6 +317,5 @@ $(function() {
         });
       },
     });
-
 
 </script>

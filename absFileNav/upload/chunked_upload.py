@@ -14,6 +14,8 @@ class MyChunkedUploadView(ChunkedUploadView):
     model = MyChunkedUpload
     field_name = 'the_file'
 
+    print(str(ChunkedUploadView))
+
     def check_permissions(self, request):
         # Allow non authenticated users to make uploads
         pass
