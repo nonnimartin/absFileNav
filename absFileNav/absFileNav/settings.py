@@ -62,8 +62,11 @@ with open('absFileNav/config.json', 'r') as read_file:
         FILE_SYSTEM_ROOT = '/'
 
 
-#default file location for saved files
+# default file location for saved files
 MEDIA_ROOT = '/Users/jonathanmartin/Desktop'
+
+# setting huge max memory size
+DATA_UPLOAD_MAX_MEMORY_SIZE = 500000000
 
 TEMPLATES = [
     {
