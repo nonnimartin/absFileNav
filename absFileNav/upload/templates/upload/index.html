@@ -226,6 +226,11 @@ $(function() {
     $('uploadForm').submit(upload);
 });
 
+//new chunked image upload
+   var data = new FormData($('#uploadForm').files[0]);
+   console.log(JSON.stringify(data));
+
+
 
 
 </script>

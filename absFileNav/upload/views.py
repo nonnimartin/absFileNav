@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+
+# from django.shortcuts import render
 from django.template import loader
 from .models import uploadFile
 from .models import UserSettings
@@ -11,7 +12,23 @@ from util import createTree
 from forms import FileUploadPath
 import json
 import os, errno
+
+# chunked uploads library imports
+
+from django.views.generic import View
+from django.shortcuts import get_object_or_404
+from django.core.files.base import ContentFile
+from django.utils import timezone
+
+from .settings import MAX_BYTES
+from .models import ChunkedUpload
+from .response import Response
+from .constants import http_status, COMPLETE
+from .exceptions import ChunkedUploadError
+
+# make sure this import is needed
 from upload.upload_forms import SettingsForm
+
 from django.shortcuts import redirect
 from django.utils import timezone
 
