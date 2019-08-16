@@ -3,6 +3,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+
+<!-- javascript file upload files -->
+<script src="/static/js/jquery.ui.widget.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="/static/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="/static/js/jquery.fileupload.js"></script>
+<!-- Calculate md5 -->
+<script src="/static/js/spark-md5.js"></script>
+
 {% block content %}
 
 <button type="button" id="settings-button" style="position:absolute; top:6; right:6;" onclick="window.location.href='/upload/user_settings'">Settings</button>
@@ -181,6 +192,9 @@ function addFolder(event, path) {
 	return false;
 }
 
+/*
+//commenting out for this branch
+
 function upload(event) {
 	event.preventDefault();
 	var data = new FormData($('#uploadForm').get(0));
@@ -222,15 +236,141 @@ function upload(event) {
 	return false;
 }
 
+*/
+
 $(function() {
     $('uploadForm').submit(upload);
 });
 
-//new chunked image upload
-   var data = new FormData($('#uploadForm').files[0]);
-   console.log(JSON.stringify(data));
+//new large image upload
+
+function upload(event) {
+
+    //get file from uploadBar
+    const file = document.getElementById('uploadBar').files[0];
+    var form = new FormData();
+    form.append('file', file);
+
+    const xhr = $.ajaxSettings.xhr();
+
+    xhr.upload.onprogress = function(evt) {
+      document.querySelector('.uploadProgressBar').style.width = parseInt(evt.loaded / evt.total * 100) + '%';
+      document.querySelector('#uploadNow').classList.add('percentageUpload');
+      document.querySelector('#uploadNow').innerText = parseInt(evt.loaded / evt.total * 100) + '%';
+    };
+
+    xhr.open('POST', 'https://enbpa3ktsphfm.x.pipedream.net');
+    xhr.send(form);
 
 
+    /*
+	event.preventDefault();
+	var data = new FormData($('#uploadForm').get(0));
+    var thisForm = new FormData($('#uploadForm').get(0));
+	$('.loader').show();
 
+	$.ajax({
+	    method:'POST',
+	    url: $(this).attr('action'),
+	    type: $(this).attr('method'),
+	    data: data,
+	    cache: false,
+	    processData: false,
+	    contentType: false,
+	    success: function(data) {
+	        $('.loader').hide();
+	        $('#removeBar').hide();
+	        $('.image-upload-wrap').show();
+	    },
+	    dataType:'text',
+	    progress: function(e) {
+        //make sure we can compute the length
+        if(e.lengthComputable) {
+            //calculate the percentage loaded
+            var pct = (e.loaded / e.total) * 100;
+
+            //log percentage loaded
+            console.log(pct);
+        }
+        //this usually happens when Content-Length isn't set
+        else {
+            console.log('Content Length not reported!');
+        }
+    }
+	}).done(function (e) {
+    // Do something
+
+    });
+	return false;
+
+	*/
+
+	//chunked upload javascript
+	var md5 = "",
+        csrf = $("input[name='csrfmiddlewaretoken']")[0].value,
+        form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
+    function calculate_md5(file, chunk_size) {
+      var slice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+          chunks = chunks = Math.ceil(file.size / chunk_size),
+          current_chunk = 0,
+          spark = new SparkMD5.ArrayBuffer();
+      function onload(e) {
+        spark.append(e.target.result);  // append chunk
+        current_chunk++;
+        if (current_chunk < chunks) {
+          read_next_chunk();
+        } else {
+          md5 = spark.end();
+        }
+      };
+      function read_next_chunk() {
+        var reader = new FileReader();
+        reader.onload = onload;
+        var start = current_chunk * chunk_size,
+            end = Math.min(start + chunk_size, file.size);
+        reader.readAsArrayBuffer(slice.call(file, start, end));
+      };
+      read_next_chunk();
+    }
+    $("#uploadForm").fileupload({
+      url: "{% url 'api_chunked_upload' %}",
+      dataType: "json",
+      maxChunkSize: 100000, // Chunks of 100 kB
+      formData: form_data,
+      add: function(e, data) { // Called before starting upload
+        $("#messages").empty();
+        // If this is the second file you're uploading we need to remove the
+        // old upload_id and just keep the csrftoken (which is always first).
+        form_data.splice(1);
+        calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
+        data.submit();
+      },
+      chunkdone: function (e, data) { // Called after uploading each chunk
+        if (form_data.length < 2) {
+          form_data.push(
+            {"name": "upload_id", "value": data.result.upload_id}
+          );
+        }
+        $("#messages").append($('<p>').text(JSON.stringify(data.result)));
+        var progress = parseInt(data.loaded / data.total * 100.0, 10);
+        $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
+      },
+      done: function (e, data) { // Called when the file has completely uploaded
+        $.ajax({
+          type: "POST",
+          url: "{% url 'api_chunked_upload_complete' %}",
+          data: {
+            csrfmiddlewaretoken: csrf,
+            upload_id: data.result.upload_id,
+            md5: md5
+          },
+          dataType: "json",
+          success: function(data) {
+            $("#messages").append($('<p>').text(JSON.stringify(data)));
+          }
+        });
+      },
+    });
+}
 
 </script>
