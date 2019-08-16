@@ -12,6 +12,7 @@ from util import createTree
 from forms import FileUploadPath
 import json
 import os, errno
+import re
 
 # chunked uploads library imports
 
@@ -312,6 +313,7 @@ class ChunkedUploadView(ChunkedUploadBaseView):
     Uploads large files in multiple chunks. Also, has the ability to resume
     if the upload is interrupted.
     """
+    print('this view = ' + str(ChunkedUploadBaseView))
 
     field_name = 'file'
     content_range_header = 'HTTP_CONTENT_RANGE'
