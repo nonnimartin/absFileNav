@@ -1,4 +1,5 @@
 from django.db import models
+from chunked_upload.models import ChunkedUpload
 
 
 class uploadFile(models.Model):
@@ -11,3 +12,10 @@ class UserSettings(models.Model):
     base_folder   = models.CharField(max_length=4096)
     last_modified = models.DateTimeField(auto_now_add=True)
     show_files    = models.BooleanField(default=False)
+
+class MyChunkedUpload(ChunkedUpload):
+    pass
+
+# Override the default ChunkedUpload to make the `user` field nullable
+MyChunkedUpload._meta.get_field('user').null = True
+

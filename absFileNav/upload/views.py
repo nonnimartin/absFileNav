@@ -14,6 +14,44 @@ import os, errno
 from upload.upload_forms import SettingsForm
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.views.generic.base import TemplateView
+from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
+from .models import MyChunkedUpload
+
+# chunked upload logic
+class ChunkedUploadDemo(TemplateView):
+    template_name = 'upload/index.html'
+
+class MyChunkedUploadView(ChunkedUploadView):
+
+    model = MyChunkedUpload
+    field_name = 'the_file'
+
+    def check_permissions(self, request):
+        # Allow non authenticated users to make uploads
+        pass
+
+class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
+
+    model = MyChunkedUpload
+
+    print('this model = ' + str(model))
+
+    def check_permissions(self, request):
+        # Allow non authenticated users to make uploads
+        pass
+
+    def on_completion(self, uploaded_file, request):
+        # Do something with the uploaded file. E.g.:
+        # * Store the uploaded file on another model:
+        # SomeModel.objects.create(user=request.user, file=uploaded_file)
+        # * Pass it as an argument to a function:
+        # function_that_process_file(uploaded_file)
+        pass
+
+    def get_response_data(self, chunked_upload, request):
+        return {'message': ("You successfully uploaded '%s' (%s bytes)!" %
+                            (chunked_upload.filename, chunked_upload.offset))}
 
 def new_path(request):
     if request.method == 'POST':
@@ -54,6 +92,9 @@ def delete_path(request):
 
 def index(request):
 
+    test = MyChunkedUploadCompleteView()
+    print('this test = ' + str(test))
+
     if request.method == 'POST' and request.FILES['myFile']:
 
         this_form = FileUploadPath(request.POST)
@@ -67,8 +108,6 @@ def index(request):
             path = this_form.cleaned_data['path']
 
         for this_file in files_list:
-
-            print('this file = ' + str(this_file))
 
             try:
 
