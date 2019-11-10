@@ -85,7 +85,6 @@
           current_chunk = 0,
           spark = new SparkMD5.ArrayBuffer();
       function onload(e) {
-        console.log('e is ' + e);
         spark.append(e.target.result);  // append chunk
         current_chunk++;
         if (current_chunk < chunks) {
@@ -104,7 +103,7 @@
       };
       read_next_chunk();
     }
-    
+
 
 
     //select folder from file tree
@@ -114,7 +113,6 @@
        //show add button when folder is chosen
        addButton.show();
        document.getElementById('id_path').value = selected;
-       //console.log(document.getElementById('uploadBar'));
    });
 
 
@@ -285,7 +283,6 @@ $(function() {
         // old upload_id and just keep the csrftoken (which is always first).
         form_data.splice(1);
         calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
-        console.log(data);
         data.submit();
       },
       chunkdone: function (e, data) { // Called after uploading each chunk
@@ -306,7 +303,8 @@ $(function() {
           data: {
             csrfmiddlewaretoken: csrf,
             upload_id: data.result.upload_id,
-            md5: md5
+            md5: md5,
+            selected : selected
           },
           dataType: "json",
           success: function(data) {

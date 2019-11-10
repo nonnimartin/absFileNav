@@ -49,7 +49,57 @@ class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
         # * Pass it as an argument to a function:
         # function_that_process_file(uploaded_file)
         print('this uploaded file = ' + str(uploaded_file))
-        print('this request = ' + str(request))
+        print('this request selected = ' + str(request.POST.get('selected')))
+        print('this request = ' + str(request.body))
+
+        if request.method == 'POST' and uploaded_file:
+
+
+            path = request.POST.get('selected')
+
+            try:
+
+                if path:
+                    # store uploaded file data in db
+                    upfile = uploadFile()
+                    upfile.name = str(uploaded_file)
+                    upfile.path = path
+                else:
+                    # save file on hard drive on setting FILE_SYSTEM_ROOT
+                    # should eventually be configurable
+
+                    path = settings.MEDIA_ROOT
+
+                    fs = FileSystemStorage(settings.FILE_SYSTEM_ROOT)
+                    filename = fs.save(clean_file_name(uploaded_file.name), uploaded_file)
+
+                    # store uploaded file data in db
+                    upfile = uploadFile()
+                    upfile.name = clean_file_name(filename)
+                    # this should eventually be configurable
+                    upfile.path = path
+
+                newPath = str(path) + '/' + str(replace_spaces(uploaded_file.name))
+                print('Writing to path: ' + newPath)
+
+                # open and write file
+                with open(newPath, 'wb+') as destination:
+                    for chunk in uploaded_file.chunks():
+                        destination.write(chunk)
+
+                destination.close()
+
+            except Exception as e:
+                # get error message
+                print('Error writing file: ' + str(e))
+                payload = {'success': False, 'error': str(e)}
+                return HttpResponse(json.dumps(payload), content_type='application/json')
+
+            upfile.checksum = hash_file(uploaded_file.open())
+            # save uploaded file
+            upfile.save()
+        payload = {'success': True}
+        return HttpResponse(json.dumps(payload), content_type='application/json')
 
     def get_response_data(self, chunked_upload, request):
         return {'message': ("You successfully uploaded '%s' (%s bytes)!" %
