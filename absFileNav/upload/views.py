@@ -26,6 +26,7 @@ class MyChunkedUploadView(ChunkedUploadView):
 
     model = MyChunkedUpload
     field_name = 'the_file'
+    print('input view = ' + str(ChunkedUploadView))
 
     def check_permissions(self, request):
         # Allow non authenticated users to make uploads
@@ -35,7 +36,7 @@ class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
 
     model = MyChunkedUpload
 
-    print('this model = ' + str(model))
+    print('this complete view = ' + str(ChunkedUploadCompleteView))
 
     def check_permissions(self, request):
         # Allow non authenticated users to make uploads
@@ -47,7 +48,8 @@ class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
         # SomeModel.objects.create(user=request.user, file=uploaded_file)
         # * Pass it as an argument to a function:
         # function_that_process_file(uploaded_file)
-        pass
+        print('this uploaded file = ' + str(uploaded_file))
+        print('this request = ' + str(request))
 
     def get_response_data(self, chunked_upload, request):
         return {'message': ("You successfully uploaded '%s' (%s bytes)!" %

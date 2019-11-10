@@ -3,6 +3,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+<script src="/static/upload/jquery.ui.widget.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="/static/upload/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="/static/upload/jquery.fileupload.js"></script>
+<!-- Calculate md5 -->
+<script src="/static/upload/spark-md5.js"></script>
 {% block content %}
 
 <button type="button" id="settings-button" style="position:absolute; top:6; right:6;" onclick="window.location.href='/upload/user_settings'">Settings</button>
@@ -33,10 +41,9 @@
     <div class="file-upload" id="jstree_demo_div"></div>
 </form>
 
-<form method="post" enctype="multipart/form-data" action="/upload/chunked_view" id="uploadForm">
-    {% csrf_token %}
-  <input id="chunked_upload" type="file" name="the_file" onchange="form.submit()">
-</form>
+ {% csrf_token %}
+  <input id="chunked_upload" type="file" name="the_file" >
+
 
 
 <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
@@ -57,6 +64,9 @@
     var addButton = $('#add-dir');
     addButton.hide();
 
+    var csrf      = $("input[name='csrfmiddlewaretoken']")[0].value;
+    var form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
+
     var rawdata = "{{ json_file_tree|escapejs }}"
     var data    = rawdata.replace(/'/g, '"');
 
@@ -64,6 +74,37 @@
     $('#jstree_demo_div').jstree({ 'core' : {
     'data' : JSON.parse(data)
     } });
+
+    var md5 = "",
+    csrf = $("input[name='csrfmiddlewaretoken']")[0].value,
+    form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
+
+    function calculate_md5(file, chunk_size) {
+      var slice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+          chunks = chunks = Math.ceil(file.size / chunk_size),
+          current_chunk = 0,
+          spark = new SparkMD5.ArrayBuffer();
+      function onload(e) {
+        console.log('e is ' + e);
+        spark.append(e.target.result);  // append chunk
+        current_chunk++;
+        if (current_chunk < chunks) {
+          read_next_chunk();
+        } else {
+          md5 = spark.end();
+        }
+      };
+
+    function read_next_chunk() {
+        var reader = new FileReader();
+        reader.onload = onload;
+        var start = current_chunk * chunk_size,
+            end = Math.min(start + chunk_size, file.size);
+        reader.readAsArrayBuffer(slice.call(file, start, end));
+      };
+      read_next_chunk();
+    }
+    
 
 
     //select folder from file tree
@@ -73,7 +114,7 @@
        //show add button when folder is chosen
        addButton.show();
        document.getElementById('id_path').value = selected;
-       console.log(document.getElementById('uploadBar'));
+       //console.log(document.getElementById('uploadBar'));
    });
 
 
@@ -233,7 +274,6 @@ $(function() {
 });
 
 //chunked upload logic
-
     $("#chunked_upload").fileupload({
       url: "{% url 'chunked_view' %}",
       dataType: "json",
@@ -245,6 +285,7 @@ $(function() {
         // old upload_id and just keep the csrftoken (which is always first).
         form_data.splice(1);
         calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
+        console.log(data);
         data.submit();
       },
       chunkdone: function (e, data) { // Called after uploading each chunk
