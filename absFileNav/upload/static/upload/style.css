@@ -428,6 +428,15 @@ there.
  font-weight: normal;
 }
 
+.button-text{
+    position: relative;
+    text-align: center;
+    width: 100%;
+    font-size: 5.5vw;
+    line-height: 9;
+    font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .file-upload-input {
   position: absolute;
   margin: 0;
@@ -458,7 +467,6 @@ there.
 #inner-button{
     border:none;
     color:#555;
-    text-align:center;
     width: -moz-available;
     margin: initial;
 }

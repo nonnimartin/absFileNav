@@ -13,17 +13,17 @@
 <script src="/static/upload/spark-md5.js"></script>
 {% block content %}
 
-<button type="button" id="settings-button" style="position:absolute; top:6; right:6;" onclick="window.location.href='/upload/user_settings'">Settings</button>
-
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <div class="file-upload">
-      <button type="button" id="main-button" disabled>Upload</button>
+        <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
+
 
       <div class="image-upload-wrap">
-        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>
+          <div class="button-text">Drag and drop a file/s to Upload</div>
+<!--        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>-->
         <div class="button" id="inner-button">
-          <div>Drag and drop a file/s to Upload</div>
+            <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
         </div>
       </div>
       <div class="file-upload-content">
@@ -41,8 +41,8 @@
     <div class="file-upload" id="jstree_demo_div"></div>
 </form>
 
- {% csrf_token %}
-  <input id="chunked_upload" type="file" name="the_file" >
+<!-- {% csrf_token %}-->
+<!--  <input id="chunked_upload" type="file" name="the_file" >-->
 
 
 
