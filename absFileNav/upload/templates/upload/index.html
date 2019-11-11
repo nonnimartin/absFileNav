@@ -15,10 +15,14 @@
 
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
+    <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
+    <hr>
+    <div class="file-upload" style="">Set your upload folder</div>
+        {{ form.path.as_hidden}}
+    <div class="file-upload" id="jstree_demo_div"></div>
+    <br>
+    <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
     <div class="file-upload">
-        <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
-
-
       <div class="image-upload-wrap">
           <div class="button-text">Drag and drop a file/s to Upload</div>
 <!--        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>-->
@@ -35,18 +39,7 @@
         </div>
       </div>
   </div>
-    <hr>
-    <div class="file-upload" style="">Set your upload folder</div>
-        {{ form.path.as_hidden}}
-    <div class="file-upload" id="jstree_demo_div"></div>
 </form>
-
-<!-- {% csrf_token %}-->
-<!--  <input id="chunked_upload" type="file" name="the_file" >-->
-
-
-
-<button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
 
 <!-- loading animation -->
 <div class="loader" hidden>Loading...</div>
@@ -192,7 +185,7 @@ function addFolder(event, path) {
 
 	$.ajax({
 	    method:'POST',
-	    url: '/upload/new_path/',
+	    url: "{% url 'new_path' %}",
 	    beforeSend: function(xhr){xhr.setRequestHeader('X-CSRFToken', "{{csrf_token}}");},
 	    type: $(this).attr('method'),
 	    data: dataPayload,
