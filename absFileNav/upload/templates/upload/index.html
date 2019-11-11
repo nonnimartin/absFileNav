@@ -18,14 +18,17 @@
     <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
     <hr>
     <div class="file-upload" style="">Set your upload folder</div>
+        {% if base_folder %}
+        {{ base_folder.as_hidden }}
+        {% else %}
         {{ form.path.as_hidden}}
-    <div class="file-upload" id="jstree_demo_div"></div>
+        {% endif %}
+    <div class="file-upload" id="jstree"></div>
     <br>
     <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
     <div class="file-upload">
       <div class="image-upload-wrap">
           <div class="button-text">Drag and drop a file/s to Upload</div>
-<!--        <input id="uploadBar" class="file-upload-input" type='file' onchange="readURL(this);" accept="file" name="myFile" multiple=""/>-->
         <div class="button" id="inner-button">
             <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
         </div>
@@ -63,10 +66,29 @@
     var rawdata = "{{ json_file_tree|escapejs }}"
     var data    = rawdata.replace(/'/g, '"');
 
+    if (!isEmpty("{{base_folder}}")){
+        var baseFolder = "{{base_folder}}";
+        data_obj      = JSON.parse(data);
+        for (i in data){
+        if (data_obj[i] != undefined){
+          if (data_obj[i].fullPath == baseFolder){
+             var default_id = data_obj[i].id;
+             console.log('default id = ' + default_id);
+             $('#jstree').jstree('select_node', default_id);
+          }
+        }
+       }
+    }
+
+
     //build tree based on structure from createtree
-    $('#jstree_demo_div').jstree({ 'core' : {
+    $('#jstree').jstree({ 'core' : {
     'data' : JSON.parse(data)
     } });
+
+    function isEmpty(str) {
+       return (!str || 0 === str.length);
+    }
 
     var md5 = "",
     csrf = $("input[name='csrfmiddlewaretoken']")[0].value,
@@ -97,15 +119,21 @@
       read_next_chunk();
     }
 
-
-
     //select folder from file tree
-    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+    $('#jstree').on("changed.jstree", function (e, data) {
        //set selected path
-       selected = data.node.original.fullPath;
-       //show add button when folder is chosen
-       addButton.show();
-       document.getElementById('id_path').value = selected;
+       if (data.node != undefined){
+           console.log('data = ' + data.node);
+           selected = data.node.original.fullPath;
+           console.log('initial selected = ' + selected);
+           //show add button when folder is chosen
+           addButton.show();
+       }
+   });
+
+   $('#jstree').on('loaded.jstree', function() {
+       console.log('default id = ' + default_id);
+       $('#jstree').jstree('select_node', default_id);
    });
 
 

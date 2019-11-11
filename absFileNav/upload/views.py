@@ -144,8 +144,10 @@ def delete_path(request):
 
 def index(request):
 
-    test = MyChunkedUploadCompleteView()
-    print('this test = ' + str(test))
+    # check for stored settings
+    stored_settings     = UserSettings.objects.all()
+    has_stored_settings = True if len(stored_settings) > 0 else False
+    print('stored settings = ' + str(stored_settings[0].base_folder))
 
     if request.method == 'POST' and request.FILES['myFile']:
 
@@ -207,7 +209,7 @@ def index(request):
         return HttpResponse(json.dumps(payload), content_type='application/json')
 
     #file upload path form
-    pathForm = FileUploadPath()
+    path_form = FileUploadPath()
 
     #page template and view variables
     template = loader.get_template('upload/index.html')
@@ -215,7 +217,9 @@ def index(request):
     #get json of file system for saving and set in view
     context = dict()
     context['path_selected']  = False
-    context['form'] = pathForm
+    context['form'] = path_form
+    if has_stored_settings:
+        context['base_folder'] = str(stored_settings[0].base_folder)
     context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
 
 
