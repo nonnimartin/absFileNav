@@ -11,4 +11,5 @@ urlpatterns = [
     path('chunked_view', MyChunkedUploadView.as_view(), name='chunked_view'),
     path('chunked_complete', MyChunkedUploadCompleteView.as_view(), name='chunked_complete'),
     path('user_settings', views.user_settings, name='user_settings'),
+    path('clear_base_folder', views.clear_base_folder, name='clear_base_folder'),
 ]

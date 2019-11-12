@@ -11,9 +11,14 @@
     {% csrf_token %}
     <div class="file-upload" style="">Set your base folder</div>
         {{ form.path.as_hidden}}
-    <div class="file-upload" id="jstree_demo_div"></div>
-    <hr>
+    <div class="file-upload" id="jstree"></div>
+    <br>
+    {{ form.path }}
+    {% if base_folder|length > 0 %}
+    <input id="clear_button" type="button" value="Clear Base Folder">
+    {% endif %}
     {{form.as_p}}
+    <hr>
     <input type="submit" value="Save Settings">
     <input type="button" value="Cancel" onclick="window.location.href='/upload/'">
 </form>
@@ -33,20 +38,30 @@
     var rawdata = "{{ json_file_tree|escapejs }}"
     var data    = rawdata.replace(/'/g, '"');
 
-    //mark checkbox
-    if ("{{show_files}}" == 'True'){
-      $("#id_show_files").prop( "checked", true );
-    }
+    $( "#clear_button" ).click(function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "{% url 'clear_base_folder' %}", true);
+        //Set headers
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
 
+        xhr.onreadystatechange = function() { // Call a function when the state changes.
+
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                // Request finished. Do processing here.
+            }
+        }
+        xhr.send();
+        window.location.reload();
+    });
 
     //build tree based on structure from createtree
-    $('#jstree_demo_div').jstree({ 'core' : {
+    $('#jstree').jstree({ 'core' : {
     'data' : JSON.parse(data)
     } });
 
-
     //select folder from file tree
-    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+    $('#jstree').on("changed.jstree", function (e, data) {
        //set selected path
        selected = data.node.original.fullPath;
        console.log('selected = ' + selected);

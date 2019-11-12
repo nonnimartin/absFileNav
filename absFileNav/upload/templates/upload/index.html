@@ -73,7 +73,6 @@
         if (data_obj[i] != undefined){
           if (data_obj[i].fullPath == baseFolder){
              var default_id = data_obj[i].id;
-             console.log('default id = ' + default_id);
              $('#jstree').jstree('select_node', default_id);
           }
         }
@@ -123,16 +122,13 @@
     $('#jstree').on("changed.jstree", function (e, data) {
        //set selected path
        if (data.node != undefined){
-           console.log('data = ' + data.node);
            selected = data.node.original.fullPath;
-           console.log('initial selected = ' + selected);
            //show add button when folder is chosen
            addButton.show();
        }
    });
 
    $('#jstree').on('loaded.jstree', function() {
-       console.log('default id = ' + default_id);
        $('#jstree').jstree('select_node', default_id);
    });
 

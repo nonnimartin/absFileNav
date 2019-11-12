@@ -1,7 +1,6 @@
 from django.db import models
 from chunked_upload.models import ChunkedUpload
 
-
 class uploadFile(models.Model):
     path     = models.CharField(max_length=4096)
     pub_date = models.DateTimeField(auto_now_add=True)

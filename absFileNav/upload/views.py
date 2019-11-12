@@ -225,6 +225,17 @@ def index(request):
 
     return HttpResponse(template.render(context, request))
 
+def clear_base_folder(request):
+    settings  = UserSettings.objects.get(id=1)
+
+    try:
+        settings.base_folder = ''
+        settings.save()
+        return HttpResponse('SUCCESS')
+    except Exception as error:
+        print('Error writing to database: ' + str(error))
+        return HttpResponse('FAILURE')
+
 def user_settings(request):
 
     stored_settings     = UserSettings.objects.all()
@@ -232,7 +243,6 @@ def user_settings(request):
 
     if request.method == 'POST':
 
-        base_folder = str()
         show_files  = bool()
 
         base_folder = request.POST['base_folder']
@@ -264,7 +274,6 @@ def user_settings(request):
         #if has stored settings, retrieve them
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
-        print('show files ' + str(stored_settings.show_files))
         context['show_files']         = stored_settings.show_files
     else:
         context['show_files']  = False
