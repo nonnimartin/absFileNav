@@ -147,7 +147,6 @@ def index(request):
     # check for stored settings
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
-    print('stored settings = ' + str(stored_settings[0].base_folder))
 
     if request.method == 'POST' and request.FILES['myFile']:
 
