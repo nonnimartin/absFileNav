@@ -26,26 +26,19 @@
     <div class="file-upload" id="jstree"></div>
     <br>
     <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
+    <!-- loading animation -->
+    <div class="loader" hidden>Loading...</div>
     <div class="file-upload">
       <div class="image-upload-wrap">
-          <div class="button-text">Drag and drop a file/s to Upload</div>
-        <div class="button" id="inner-button">
-            <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
+          <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
+          <div id="button-text">Drag and drop a file/s to Upload</div>
+          <div class="file-upload-content">
         </div>
       </div>
-      <div class="file-upload-content">
-          <br>
-          <br>
-
-        <div id='removeBar' class="image-title-wrap">
-          <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File/s</span></button>
         </div>
       </div>
   </div>
 </form>
-
-<!-- loading animation -->
-<div class="loader" hidden>Loading...</div>
 
 
 {% if uploaded_file_url %}
@@ -180,16 +173,6 @@ $('.image-upload-wrap').bind('dragover', function () {
         $('.image-upload-wrap').removeClass('image-dropping');
 });
 
-
-$( "#main-button" ).click(function(e) {
-  var uploadBar = $("#uploadBar");
-  //get the input and UL list
-  var input = document.getElementById('uploadBar');
-  console.log('input = ' + JSON.stringify(input));
-  var list = document.getElementById('fileList');
-  upload(e);
-});
-
 //handle adding a folder
 $( "#add-dir" ).click(function(e) {
    var newFolder = prompt("Folder Name (Spaces and other characters may be replaced)", "New_Folder");
@@ -243,51 +226,6 @@ function addFolder(event, path) {
 	return false;
 }
 
-function upload(event) {
-	event.preventDefault();
-	var data = new FormData($('#uploadForm').get(0));
-    var thisForm = new FormData($('#uploadForm').get(0));
-	$('.loader').show();
-
-	$.ajax({
-	    method:'POST',
-	    url: $(this).attr('action'),
-	    type: $(this).attr('method'),
-	    data: data,
-	    cache: false,
-	    processData: false,
-	    contentType: false,
-	    success: function(data) {
-	        $('.loader').hide();
-	        $('#removeBar').hide();
-	        $('.image-upload-wrap').show();
-	    },
-	    dataType:'text',
-	    progress: function(e) {
-        //make sure we can compute the length
-        if(e.lengthComputable) {
-            //calculate the percentage loaded
-            var pct = (e.loaded / e.total) * 100;
-
-            //log percentage loaded
-            console.log(pct);
-        }
-        //this usually happens when Content-Length isn't set
-        else {
-            console.log('Content Length not reported!');
-        }
-    }
-	}).done(function (e) {
-    // Do something
-
-    });
-	return false;
-}
-
-$(function() {
-    $('uploadForm').submit(upload);
-});
-
 //chunked upload logic
     $("#chunked_upload").fileupload({
       url: "{% url 'chunked_view' %}",
@@ -299,7 +237,9 @@ $(function() {
         // If this is the second file you're uploading we need to remove the
         // old upload_id and just keep the csrftoken (which is always first).
         form_data.splice(1);
-        calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
+        console.log('submit data = ' + JSON.stringify(data));
+        console.log('form data = ' + JSON.stringify(form_data));
+        calculate_md5(data.files[0], 500000);  // Again, chunks of 100 kB
         data.submit();
       },
       chunkdone: function (e, data) { // Called after uploading each chunk
@@ -325,6 +265,9 @@ $(function() {
           },
           dataType: "json",
           success: function(data) {
+            //log files
+            console.log($('#chunked_upload'));
+            console.log(JSON.stringify(form_data));
             $("#messages").append($('<p>').text(JSON.stringify(data)));
           }
         });

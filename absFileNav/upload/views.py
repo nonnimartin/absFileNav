@@ -48,9 +48,6 @@ class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
         # SomeModel.objects.create(user=request.user, file=uploaded_file)
         # * Pass it as an argument to a function:
         # function_that_process_file(uploaded_file)
-        print('this uploaded file = ' + str(uploaded_file))
-        print('this request selected = ' + str(request.POST.get('selected')))
-        print('this request = ' + str(request.body))
 
         if request.method == 'POST' and uploaded_file:
 
