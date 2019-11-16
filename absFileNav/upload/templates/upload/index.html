@@ -13,6 +13,9 @@
 <script src="/static/upload/spark-md5.js"></script>
 {% block content %}
 
+<!-- loading animation -->
+<div class="loader" hidden>Loading...</div>
+
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
@@ -26,8 +29,6 @@
     <div class="file-upload" id="jstree"></div>
     <br>
     <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
-    <!-- loading animation -->
-    <div class="loader" hidden>Loading...</div>
     <div class="file-upload">
       <div class="image-upload-wrap">
           <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
@@ -248,6 +249,11 @@ function addFolder(event, path) {
             {"name": "upload_id", "value": data.result.upload_id}
           );
         }
+
+        //hide file upload bar while upload in progress and show the loading animation
+        $('#uploadForm').hide();
+        $('.file-upload').hide();
+        $('.loader').show();
         $("#messages").append($('<p>').text(JSON.stringify(data.result)));
         var progress = parseInt(data.loaded / data.total * 100.0, 10);
         $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
@@ -265,6 +271,10 @@ function addFolder(event, path) {
           },
           dataType: "json",
           success: function(data) {
+            //show button again and remove loading animation
+            $('#uploadForm').show();
+            $('.file-upload').show();
+            $('.loader').hide();
             //log files
             console.log($('#chunked_upload'));
             console.log(JSON.stringify(form_data));
