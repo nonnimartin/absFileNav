@@ -73,7 +73,6 @@
        }
     }
 
-
     //build tree based on structure from createtree
     $('#jstree').jstree({ 'core' : {
     'data' : JSON.parse(data)
@@ -227,16 +226,64 @@ function addFolder(event, path) {
   return false;
 }
 
-    // Used for creating a new FileList in a round-about way
-    function FileListItem(a) {
-      a = [].slice.call(Array.isArray(a) ? a : arguments)
-      for (var c, b = c = a.length, d = !0; b-- && d;) d = a[b] instanceof File
-      if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
-      for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(a[c])
-      return b.files
+
+async function processFiles(element){
+
+           element.fileupload({
+                  url: "{% url 'chunked_view' %}",
+                  dataType: "json",
+                  maxChunkSize: 100000, // Chunks of 100 kB
+                  formData: form_data,
+                  add: function(e, data) { // Called before starting upload
+                    console.log('data files = ' + JSON.stringify(data.files[0]));
+                    $("#messages").empty();
+                    // If this is the second file you're uploading we need to remove the
+                    // old upload_id and just keep the csrftoken (which is always first).
+                    form_data.splice(1);
+                    calculate_md5(data.files[0], 500000);  // Again, chunks of 100 kB
+                    data.submit();
+                  },
+                  chunkdone: function (e, data) { // Called after uploading each chunk
+                    if (form_data.length < 2) {
+                      form_data.push(
+                        {"name": "upload_id", "value": data.result.upload_id}
+                      );
+                    }
+
+                    //hide file upload bar while upload in progress and show the loading animation
+                    $('#uploadForm').hide();
+                    $('.loader').show();
+                    $("#messages").append($('<p>').text(JSON.stringify(data.result)));
+                    var progress = parseInt(data.loaded / data.total * 100.0, 10);
+                    $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
+                  },
+                  done: function (e, data) { // Called when the file has completely uploaded
+                    $.ajax({
+                      type: "POST",
+
+                      url: "{% url 'chunked_complete' %}",
+                      data: {
+                        csrfmiddlewaretoken: csrf,
+                        upload_id: data.result.upload_id,
+                        md5: md5,
+                        selected : selected
+                      },
+                      dataType: "json",
+                      success: function(data) {
+                        console.log('success');
+                        //show button again and remove loading animation
+                        $('#uploadForm').show();
+                        $('.loader').hide();
+                        //log files
+                        console.log(JSON.stringify(form_data));
+                        $("#messages").append($('<p>').text(JSON.stringify(data)));
+                      }
+                    });
+                  },
+                });
     }
 
-//chunked upload logic
+    //chunked upload logic
 
     //check for selected
     $('#chunked_upload').on('propertychange input', function (e) {
@@ -249,75 +296,17 @@ function addFolder(event, path) {
 
             //checking for the files
             var files = document.getElementById('chunked_upload').files;
-            for (var i = 0; i < files.length; i++) {
+            var filesArray = Array.from(files);
+            console.log('files array = ' + JSON.stringify(filesArray));
 
-                // get item
-                file = files.item(i);
-
-                console.log('this file name = ' + file.name);
-
-            console.log($('#chunked_upload'));
-            console.log('form_data = ' + JSON.stringify(form_data));
-
-            var clonedChunked = $('#chunked_upload').clone();
-            console.log('cloned = ' + JSON.stringify(clonedChunked));
-            var newFiles = [file]
-            clonedChunked.prop('files', newFiles);
-            console.log('cloned files = ' + JSON.stringify(clonedChunked.prop('files')));
-
-            file.fileupload({
-              url: "{% url 'chunked_view' %}",
-              dataType: "json",
-              maxChunkSize: 100000, // Chunks of 100 kB
-              formData: form_data,
-              add: function(e, data) { // Called before starting upload
-                console.log('e = ' + JSON.stringify(e));
-                console.log('data files = ' + JSON.stringify(data.files[0]));
-                $("#messages").empty();
-                // If this is the second file you're uploading we need to remove the
-                // old upload_id and just keep the csrftoken (which is always first).
-                form_data.splice(1);
-                calculate_md5(data.files[0], 500000);  // Again, chunks of 100 kB
-                data.submit();
-              },
-              chunkdone: function (e, data) { // Called after uploading each chunk
-                if (form_data.length < 2) {
-                  form_data.push(
-                    {"name": "upload_id", "value": data.result.upload_id}
-                  );
-                }
-
-                //hide file upload bar while upload in progress and show the loading animation
-                $('#uploadForm').hide();
-                $('.loader').show();
-                $("#messages").append($('<p>').text(JSON.stringify(data.result)));
-                var progress = parseInt(data.loaded / data.total * 100.0, 10);
-                $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
-              },
-              done: function (e, data) { // Called when the file has completely uploaded
-                $.ajax({
-                  type: "POST",
-
-                  url: "{% url 'chunked_complete' %}",
-                  data: {
-                    csrfmiddlewaretoken: csrf,
-                    upload_id: data.result.upload_id,
-                    md5: md5,
-                    selected : selected
-                  },
-                  dataType: "json",
-                  success: function(data) {
-                    //show button again and remove loading animation
-                    $('#uploadForm').show();
-                    $('.loader').hide();
-                    //log files
-                    console.log($('#chunked_upload'));
-                    console.log(JSON.stringify(form_data));
-                    $("#messages").append($('<p>').text(JSON.stringify(data)));
-                  }
-                });
-              },
-            });
-        }
+            for (let i = 0; i < filesArray.length; i++){
+                    let file = filesArray[i]
+                    let list = new DataTransfer();
+                    list.items.add(file);
+                    let myFileList = list.files;
+                    $('#chunked_upload').prop('files', myFileList);
+                    console.log('this file = ' + file.name);
+                    processFiles($('#chunked_upload'));
+            }
     }});
 </script>
