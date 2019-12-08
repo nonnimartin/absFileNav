@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.views.generic.base import TemplateView
 from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
 from .models import MyChunkedUpload
+from django.core.files.storage import default_storage
 
 # chunked upload logic
 class ChunkedUploadDemo(TemplateView):
@@ -304,3 +305,19 @@ def hash_file(file, block_size=65536):
         hasher.update(buf)
 
     return hasher.hexdigest()
+
+
+def receive_resumable(request):
+
+    if request.method == 'POST':
+        print('POST request received!')
+        print(request.FILES['file'])
+        this_file = request.FILES['file']
+        print('name = ' + this_file.name)
+
+        with default_storage.open('tmp/' + this_file.name, 'ab') as destination:
+            for chunk in this_file.chunks():
+                destination.write(chunk)
+
+        #print(request.data['file'])
+        return HttpResponse('Got the post request')
