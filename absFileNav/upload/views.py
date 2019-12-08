@@ -315,9 +315,13 @@ def receive_resumable(request):
         this_file = request.FILES['file']
         print('name = ' + this_file.name)
 
-        with default_storage.open('tmp/' + this_file.name, 'ab') as destination:
-            for chunk in this_file.chunks():
-                destination.write(chunk)
-
-        #print(request.data['file'])
-        return HttpResponse('Got the post request')
+        try:
+            with default_storage.open('tmp/' + this_file.name, 'ab') as destination:
+                for chunk in this_file.chunks():
+                    destination.write(chunk)
+            
+            return HttpResponse(status=200)
+        except:
+            return HttpResponse(status=500)
+    elif request.method == 'GET':
+        return HttpResponse(status=202)
