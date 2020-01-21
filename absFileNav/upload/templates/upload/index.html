@@ -206,7 +206,7 @@ $('#chunked_upload').change(function(e) {
     target: '/upload/receive_resumable',
     headers: {
       'X-CSRFToken': '{{csrf_token}}',
-      'testChunks': true,
+      'destination' : selected,
       }
     });
 
@@ -240,4 +240,6 @@ $('#chunked_upload').change(function(e) {
     });
 
 });
+
+
 </script>

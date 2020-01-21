@@ -18,6 +18,7 @@ from django.views.generic.base import TemplateView
 from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
 from .models import MyChunkedUpload
 from django.core.files.storage import default_storage
+import sys
 
 # chunked upload logic
 class ChunkedUploadDemo(TemplateView):
@@ -27,7 +28,6 @@ class MyChunkedUploadView(ChunkedUploadView):
 
     model = MyChunkedUpload
     field_name = 'the_file'
-    print('input view = ' + str(ChunkedUploadView))
 
     def check_permissions(self, request):
         # Allow non authenticated users to make uploads
@@ -295,10 +295,6 @@ def create_dir(dir_path):
         if e.errno != errno.EEXIST:
             raise
 
-def delete_path(path):
-    #add logic for deleting files/dirs carefully
-    print('delete path = ' + path)
-
 def hash_file(file, block_size=65536):
     hasher = hashlib.md5()
     for buf in iter(partial(file.read, block_size), b''):
@@ -310,18 +306,18 @@ def hash_file(file, block_size=65536):
 def receive_resumable(request):
 
     if request.method == 'POST':
-        print('POST request received!')
-        print(request.FILES['file'])
         this_file = request.FILES['file']
-        print('name = ' + this_file.name)
-
+        destination_dir = str(request.headers['destination'])
+        #test_file = open('/tmp/testBinary.mpeg', 'ab')
         try:
-            with default_storage.open('tmp/' + this_file.name, 'ab') as destination:
+            with default_storage.open(destination_dir + '/' + this_file.name, 'ab') as destination:
                 for chunk in this_file.chunks():
+                    #test_file.write(chunk)
                     destination.write(chunk)
             
             return HttpResponse(status=200)
         except:
+            print('Exception : ' + str(sys.exc_info()[0]))
             return HttpResponse(status=500)
     elif request.method == 'GET':
         return HttpResponse(status=202)
