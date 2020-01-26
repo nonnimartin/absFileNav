@@ -20,6 +20,10 @@ from .models import MyChunkedUpload
 from django.core.files.storage import default_storage
 import sys
 
+# chunked upload library from django-resumable imports
+from django.http import HttpResponse
+from .files import ResumableFile, get_storage, get_chunks_upload_to
+
 # chunked upload logic
 class ChunkedUploadDemo(TemplateView):
     template_name = 'upload/index.html'
@@ -303,21 +307,44 @@ def hash_file(file, block_size=65536):
     return hasher.hexdigest()
 
 
-def receive_resumable(request):
+# def receive_resumable(request):
 
-    if request.method == 'POST':
-        this_file = request.FILES['file']
-        destination_dir = str(request.headers['destination'])
-        #test_file = open('/tmp/testBinary.mpeg', 'ab')
-        try:
-            with default_storage.open(destination_dir + '/' + this_file.name, 'ab') as destination:
-                for chunk in this_file.chunks():
-                    #test_file.write(chunk)
-                    destination.write(chunk)
+#     if request.method == 'POST':
+#         this_file = request.FILES['file']
+#         destination_dir = str(request.headers['destination'])
+#         #test_file = open('/tmp/testBinary.mpeg', 'ab')
+#         try:
+#             with default_storage.open(destination_dir + '/' + this_file.name, 'ab') as destination:
+#                 for chunk in this_file.chunks():
+#                     #test_file.write(chunk)
+#                     destination.write(chunk)
             
-            return HttpResponse(status=200)
-        except:
-            print('Exception : ' + str(sys.exc_info()[0]))
-            return HttpResponse(status=500)
+#             return HttpResponse(status=200)
+#         except:
+#             print('Exception : ' + str(sys.exc_info()[0]))
+#             return HttpResponse(status=500)
+#     elif request.method == 'GET':
+#         return HttpResponse(status=202)
+
+def receive_resumable(request):
+    upload_to = get_chunks_upload_to(request)
+    storage = get_storage(upload_to)
+    if request.method == 'POST':
+        chunk = request.FILES.get('file')
+        r = ResumableFile(storage, request.POST)
+        if not r.chunk_exists:
+            r.process_chunk(chunk)
+        if r.is_complete:
+            actual_filename = storage.save(r.filename, r.file)
+            r.delete_chunks()
+            return HttpResponse(storage.url(actual_filename), status=201)
+        return HttpResponse('chunk uploaded')
     elif request.method == 'GET':
-        return HttpResponse(status=202)
+        r = ResumableFile(storage, request.GET)
+        if not r.chunk_exists:
+            return HttpResponse('chunk not found', status=404)
+        if r.is_complete:
+            actual_filename = storage.save(r.filename, r.file)
+            r.delete_chunks()
+            return HttpResponse(storage.url(actual_filename), status=201)
+        return HttpResponse('chunk exists', status=200)
