@@ -20,10 +20,6 @@ from .models import MyChunkedUpload
 from django.core.files.storage import default_storage
 import sys
 
-# chunked upload library from django-resumable imports
-from django.http import HttpResponse
-from .files import ResumableFile, get_storage, get_chunks_upload_to
-
 # chunked upload logic
 class ChunkedUploadDemo(TemplateView):
     template_name = 'upload/index.html'
@@ -40,8 +36,6 @@ class MyChunkedUploadView(ChunkedUploadView):
 class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
 
     model = MyChunkedUpload
-
-    print('this complete view = ' + str(ChunkedUploadCompleteView))
 
     def check_permissions(self, request):
         # Allow non authenticated users to make uploads
@@ -82,7 +76,7 @@ class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
                     upfile.path = path
 
                 newPath = str(path) + '/' + str(replace_spaces(uploaded_file.name))
-                print('Writing to path: ' + newPath)
+                #print('Writing to path: ' + newPath)
 
                 # open and write file
                 with open(newPath, 'wb+') as destination:
@@ -249,18 +243,18 @@ def user_settings(request):
         base_folder = request.POST['base_folder']
         if 'show_files' in request.POST.keys():
             show_files = request.POST['show_files']
-            print('show files in here ' + show_files)
+            # print('show files in here ' + show_files)
             if show_files == 'on':
                 show_files = True
 
-        print('post base folder = ' + base_folder)
+        # print('post base folder = ' + base_folder)
 
         save_settings = UserSettings()
         save_settings.id = 1
         save_settings.show_files  = show_files
         save_settings.base_folder = base_folder
         save_settings.last_modified = timezone.now()
-        print('save settings show files = ' + str(save_settings.show_files))
+        #print('save settings show files = ' + str(save_settings.show_files))
 
         try:
             save_settings.save()
@@ -299,52 +293,89 @@ def create_dir(dir_path):
         if e.errno != errno.EEXIST:
             raise
 
-def hash_file(file, block_size=65536):
-    hasher = hashlib.md5()
-    for buf in iter(partial(file.read, block_size), b''):
-        hasher.update(buf)
+def dir_exists(dir_path):
+    return os.path.exists(dir_path)
 
-    return hasher.hexdigest()
+# store a map of each unique file id and an int for how many more bytes it needs
+chunks_map = dict()
+path_map   = dict()
 
+def register_chunk(tmp_file_name, file_size, current_size):
+    chunks_map[tmp_file_name] = file_size - current_size
 
-# def receive_resumable(request):
+def reduce_file_size(tmp_file_name, current_size):
+    print('before size = ' + str(chunks_map[tmp_file_name]))
+    chunks_map[tmp_file_name] = chunks_map[tmp_file_name] - current_size
+    print('after size = ' + str(chunks_map[tmp_file_name]))
 
-#     if request.method == 'POST':
-#         this_file = request.FILES['file']
-#         destination_dir = str(request.headers['destination'])
-#         #test_file = open('/tmp/testBinary.mpeg', 'ab')
-#         try:
-#             with default_storage.open(destination_dir + '/' + this_file.name, 'ab') as destination:
-#                 for chunk in this_file.chunks():
-#                     #test_file.write(chunk)
-#                     destination.write(chunk)
-            
-#             return HttpResponse(status=200)
-#         except:
-#             print('Exception : ' + str(sys.exc_info()[0]))
-#             return HttpResponse(status=500)
-#     elif request.method == 'GET':
-#         return HttpResponse(status=202)
+def get_file_size(tmp_file_name):
+    return chunks_map[tmp_file_name]
+
+def concatenate_files(file_dir, total_chunks):
+    
+    files_map = dict()
+
+    list_dir  = os.listdir(file_dir) 
+    # print(list_dir)   
+    
+    # get list of numbers between 0 and total_chunks
+    chunks_list = list(list(range(1, total_chunks +1)))
+    # print(chunks_list)
+
+def delete_keys(tmp_file_name):
+    del path_map[tmp_file_name]
+    del chunks_map[tmp_file_name]
 
 def receive_resumable(request):
-    upload_to = get_chunks_upload_to(request)
-    storage = get_storage(upload_to)
+
     if request.method == 'POST':
-        chunk = request.FILES.get('file')
-        r = ResumableFile(storage, request.POST)
-        if not r.chunk_exists:
-            r.process_chunk(chunk)
-        if r.is_complete:
-            actual_filename = storage.save(r.filename, r.file)
-            r.delete_chunks()
-            return HttpResponse(storage.url(actual_filename), status=201)
-        return HttpResponse('chunk uploaded')
+        this_file       = request.FILES['file']
+        destination_dir = str(request.headers['destination'])
+        chunk_size      = str(request.POST.get('resumableChunkSize'))
+        chunk_num       = int(request.POST.get('resumableChunkNumber'))
+        file_total_size = int(request.POST.get('resumableTotalSize'))
+        current_size    = int(request.POST.get('resumableCurrentChunkSize'))
+        total_chunks    = int(request.POST.get('resumableTotalChunks'))
+        file_root_name  = this_file.name + '-TMPFILE-'
+        tmp_file_name   = file_root_name +  str(chunk_num)
+        tmp_dir         = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dest        = tmp_dir + tmp_file_name
+
+        if tmp_file_name not in path_map:
+            path_map[tmp_file_name] = file_root_name
+
+        try:
+            if not dir_exists(tmp_dir):
+                # if local tmp dir doesn't exist, make it so
+                create_dir(tmp_dir)
+        except:
+            print('Exception : ' + str(sys.exc_info()[0]))
+            return HttpResponse(status=500)
+
+        try:
+            with default_storage.open(tmp_dest, 'ab') as destination:
+
+                for chunk in this_file.chunks():
+                    destination.write(chunk)
+                
+            if file_root_name not in chunks_map.keys():
+                # add tmp file name if not in map
+                register_chunk(file_root_name, file_total_size, current_size)
+            else:
+                # reduce total size remaining in map
+                reduce_file_size(file_root_name, current_size)
+            
+            # if size of remaining chunks is 0
+            if get_file_size(file_root_name) == 0:
+                pass
+                # concatenate file pieces and write to a single file
+                # concatenate_files(tmp_dir, total_chunks)
+                #clear maps from memory to avoid memory leak
+                #delete_keys(file_root_name)
+            
+            return HttpResponse(status=200)
+        except:
+            print('Exception : ' + str(sys.exc_info()[0]))
+            return HttpResponse(status=500)
     elif request.method == 'GET':
-        r = ResumableFile(storage, request.GET)
-        if not r.chunk_exists:
-            return HttpResponse('chunk not found', status=404)
-        if r.is_complete:
-            actual_filename = storage.save(r.filename, r.file)
-            r.delete_chunks()
-            return HttpResponse(storage.url(actual_filename), status=201)
-        return HttpResponse('chunk exists', status=200)
+        return HttpResponse(status=202)
