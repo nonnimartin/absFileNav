@@ -12,9 +12,3 @@ class UserSettings(models.Model):
     last_modified = models.DateTimeField(auto_now_add=True)
     show_files    = models.BooleanField(default=False)
 
-class MyChunkedUpload(ChunkedUpload):
-    pass
-
-# Override the default ChunkedUpload to make the `user` field nullable
-MyChunkedUpload._meta.get_field('user').null = True
-

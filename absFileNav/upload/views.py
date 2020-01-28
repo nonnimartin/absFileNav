@@ -15,92 +15,9 @@ from upload.upload_forms import SettingsForm
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic.base import TemplateView
-from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
-from .models import MyChunkedUpload
 from django.core.files.storage import default_storage
 import sys
 from shutil import rmtree
-
-# chunked upload logic
-class ChunkedUploadDemo(TemplateView):
-    template_name = 'upload/index.html'
-
-class MyChunkedUploadView(ChunkedUploadView):
-
-    model = MyChunkedUpload
-    field_name = 'the_file'
-
-    def check_permissions(self, request):
-        # Allow non authenticated users to make uploads
-        pass
-
-class MyChunkedUploadCompleteView(ChunkedUploadCompleteView):
-
-    model = MyChunkedUpload
-
-    def check_permissions(self, request):
-        # Allow non authenticated users to make uploads
-        pass
-
-    def on_completion(self, uploaded_file, request):
-        # Do something with the uploaded file. E.g.:
-        # * Store the uploaded file on another model:
-        # SomeModel.objects.create(user=request.user, file=uploaded_file)
-        # * Pass it as an argument to a function:
-        # function_that_process_file(uploaded_file)
-
-        if request.method == 'POST' and uploaded_file:
-
-
-            path = request.POST.get('selected')
-
-            try:
-
-                if path:
-                    # store uploaded file data in db
-                    upfile = uploadFile()
-                    upfile.name = str(uploaded_file)
-                    upfile.path = path
-                else:
-                    # save file on hard drive on setting FILE_SYSTEM_ROOT
-                    # should eventually be configurable
-
-                    path = settings.MEDIA_ROOT
-
-                    fs = FileSystemStorage(settings.FILE_SYSTEM_ROOT)
-                    filename = fs.save(clean_file_name(uploaded_file.name), uploaded_file)
-
-                    # store uploaded file data in db
-                    upfile = uploadFile()
-                    upfile.name = clean_file_name(filename)
-                    # this should eventually be configurable
-                    upfile.path = path
-
-                newPath = str(path) + '/' + str(replace_spaces(uploaded_file.name))
-                #print('Writing to path: ' + newPath)
-
-                # open and write file
-                with open(newPath, 'wb+') as destination:
-                    for chunk in uploaded_file.chunks():
-                        destination.write(chunk)
-
-                destination.close()
-
-            except Exception as e:
-                # get error message
-                print('Error writing file: ' + str(e))
-                payload = {'success': False, 'error': str(e)}
-                return HttpResponse(json.dumps(payload), content_type='application/json')
-
-            upfile.checksum = hash_file(uploaded_file.open())
-            # save uploaded file
-            upfile.save()
-        payload = {'success': True}
-        return HttpResponse(json.dumps(payload), content_type='application/json')
-
-    def get_response_data(self, chunked_upload, request):
-        return {'message': ("You successfully uploaded '%s' (%s bytes)!" %
-                            (chunked_upload.filename, chunked_upload.offset))}
 
 def new_path(request):
     if request.method == 'POST':
@@ -312,9 +229,7 @@ def register_chunk(tmp_file_name, file_size, current_size):
     chunks_map[tmp_file_name] = file_size - current_size
 
 def reduce_file_size(tmp_file_name, current_size):
-    print('before size = ' + str(chunks_map[tmp_file_name]))
     chunks_map[tmp_file_name] = chunks_map[tmp_file_name] - current_size
-    print('after size = ' + str(chunks_map[tmp_file_name]))
 
 def get_file_size(tmp_file_name):
     return chunks_map[tmp_file_name]
@@ -360,7 +275,6 @@ def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, de
 
 
 def delete_keys(tmp_file_name):
-    del path_map[tmp_file_name]
     del chunks_map[tmp_file_name]
 
 def receive_resumable(request):
@@ -379,9 +293,6 @@ def receive_resumable(request):
         tmp_file_name    = file_root_name +  str(chunk_num)
         tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dest         = tmp_dir + tmp_file_name
-
-        if tmp_file_name not in path_map:
-            path_map[tmp_file_name] = file_root_name
 
         try:
             if not dir_exists(tmp_dir):
@@ -407,12 +318,10 @@ def receive_resumable(request):
             
             # if size of remaining chunks is 0
             if get_file_size(file_root_name) == 0:
-                concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
-                pass
                 # concatenate file pieces and write to a single file
-                # concatenate_files(tmp_dir, total_chunks)
+                concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
                 #clear maps from memory to avoid memory leak
-                #delete_keys(file_root_name)
+                delete_keys(file_root_name)
             
             return HttpResponse(status=200)
         except:
