@@ -19,6 +19,7 @@ from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
 from .models import MyChunkedUpload
 from django.core.files.storage import default_storage
 import sys
+from shutil import rmtree
 
 # chunked upload logic
 class ChunkedUploadDemo(TemplateView):
@@ -293,6 +294,13 @@ def create_dir(dir_path):
         if e.errno != errno.EEXIST:
             raise
 
+def delete_dir_recursively(dir_path):
+    try:
+        rmtree(dir_path)
+        return True
+    except:
+        print('Exception type : ' + str(sys.exc_info()[0]))
+
 def dir_exists(dir_path):
     return os.path.exists(dir_path)
 
@@ -311,16 +319,45 @@ def reduce_file_size(tmp_file_name, current_size):
 def get_file_size(tmp_file_name):
     return chunks_map[tmp_file_name]
 
-def concatenate_files(file_dir, total_chunks):
+def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, destination):
     
     files_map = dict()
+    list_dir  = os.listdir(file_tmp_dir) 
 
-    list_dir  = os.listdir(file_dir) 
-    # print(list_dir)   
-    
     # get list of numbers between 0 and total_chunks
-    chunks_list = list(list(range(1, total_chunks +1)))
-    # print(chunks_list)
+    chunks_list = list(list(range(1, total_chunks + 1)))
+    
+    # construct mapping of numbers to files, organizing files into ordered listing
+    for item in list_dir:
+        files_map[int(item.split('TMPFILE-')[1])] = item
+    
+    try:
+        # open file at destination as binary appending
+        write_file = open(destination, 'ab')
+
+        write_file_path = destination_dir + '/' + file_name
+
+        # write each file to the end of the file at destination location
+        write_file  = open(write_file_path, 'ab')
+
+        for chunk_num in chunks_list:
+            # read file of this num
+            read_file_name  = file_tmp_dir + files_map[chunk_num]
+
+            # open partial file to read each iteration
+            with open(read_file_name, mode='rb') as read_file:
+                binary_data = read_file.read()
+
+                # write partial file to single destination file
+                write_file.write(binary_data)
+                read_file.close()
+        write_file.close()
+        delete_dir_recursively(file_tmp_dir)
+    
+    except:
+        print('Exception type : ' + str(sys.exc_info()[0]))
+        print('Exception info : ' + str(sys.exc_info()[3]))
+
 
 def delete_keys(tmp_file_name):
     del path_map[tmp_file_name]
@@ -329,17 +366,19 @@ def delete_keys(tmp_file_name):
 def receive_resumable(request):
 
     if request.method == 'POST':
-        this_file       = request.FILES['file']
-        destination_dir = str(request.headers['destination'])
-        chunk_size      = str(request.POST.get('resumableChunkSize'))
-        chunk_num       = int(request.POST.get('resumableChunkNumber'))
-        file_total_size = int(request.POST.get('resumableTotalSize'))
-        current_size    = int(request.POST.get('resumableCurrentChunkSize'))
-        total_chunks    = int(request.POST.get('resumableTotalChunks'))
-        file_root_name  = this_file.name + '-TMPFILE-'
-        tmp_file_name   = file_root_name +  str(chunk_num)
-        tmp_dir         = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
-        tmp_dest        = tmp_dir + tmp_file_name
+        this_file        = request.FILES['file']
+        file_name        = this_file.name
+        destination_dir  = str(request.headers['destination'])
+        destination_path = destination_dir + '/' + this_file.name
+        chunk_size       = str(request.POST.get('resumableChunkSize'))
+        chunk_num        = int(request.POST.get('resumableChunkNumber'))
+        file_total_size  = int(request.POST.get('resumableTotalSize'))
+        current_size     = int(request.POST.get('resumableCurrentChunkSize'))
+        total_chunks     = int(request.POST.get('resumableTotalChunks'))
+        file_root_name   = this_file.name + '-TMPFILE-'
+        tmp_file_name    = file_root_name +  str(chunk_num)
+        tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dest         = tmp_dir + tmp_file_name
 
         if tmp_file_name not in path_map:
             path_map[tmp_file_name] = file_root_name
@@ -349,7 +388,8 @@ def receive_resumable(request):
                 # if local tmp dir doesn't exist, make it so
                 create_dir(tmp_dir)
         except:
-            print('Exception : ' + str(sys.exc_info()[0]))
+            print('Exception type : ' + str(sys.exc_info()[0]))
+            print('Exception info : ' + str(sys.exc_info()[3]))
             return HttpResponse(status=500)
 
         try:
@@ -367,6 +407,7 @@ def receive_resumable(request):
             
             # if size of remaining chunks is 0
             if get_file_size(file_root_name) == 0:
+                concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
                 pass
                 # concatenate file pieces and write to a single file
                 # concatenate_files(tmp_dir, total_chunks)
@@ -375,7 +416,8 @@ def receive_resumable(request):
             
             return HttpResponse(status=200)
         except:
-            print('Exception : ' + str(sys.exc_info()[0]))
+            print('Exception type : ' + str(sys.exc_info()[0]))
+            print('Exception type : ' + str(sys.exc_info()[3]))
             return HttpResponse(status=500)
     elif request.method == 'GET':
         return HttpResponse(status=202)

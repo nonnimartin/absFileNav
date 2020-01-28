@@ -203,6 +203,10 @@ function addFolder(event, path) {
 
 $('#chunked_upload').change(function(e) {
 
+    if (typeof selected == 'undefined'){
+      alert('Please select a destination.')
+    }
+
     var r = new Resumable({
     target: '/upload/receive_resumable',
     headers: {
