@@ -55,12 +55,13 @@
     var addButton = $('#add-dir');
     addButton.hide();
 
-
     var csrf      = $("input[name='csrfmiddlewaretoken']")[0].value;
     var form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
 
     var rawdata = "{{ json_file_tree|escapejs }}"
-    var data    = rawdata.replace(/'/g, '"');
+    
+    //escape apostrophes in file paths
+    var data    = rawdata.replace(/'/g, "\\'");
 
     if (!isEmpty("{{base_folder}}")){
         var baseFolder = "{{base_folder}}";
