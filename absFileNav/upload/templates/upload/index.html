@@ -62,10 +62,11 @@
     
     //escape apostrophes in file paths
     var data    = rawdata.replace(/'/g, "\\'");
+    data        = data.replace(/ \//g,"\n");
 
     if (!isEmpty("{{base_folder}}")){
         var baseFolder = "{{base_folder}}";
-        data_obj      = JSON.parse(data);
+        data_obj       = data;
         for (i in data){
         if (data_obj[i] != undefined){
           if (data_obj[i].fullPath == baseFolder){
