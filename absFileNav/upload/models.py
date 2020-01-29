@@ -1,5 +1,4 @@
 from django.db import models
-from chunked_upload.models import ChunkedUpload
 
 class uploadFile(models.Model):
     path     = models.CharField(max_length=4096)
