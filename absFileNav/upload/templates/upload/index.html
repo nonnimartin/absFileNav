@@ -198,52 +198,5 @@ function addFolder(event, path) {
   return false;
 }
 
-
-$('#chunked_upload').change(function(e) {
-
-    if (typeof selected == 'undefined'){
-      alert('Please select a destination.')
-    }
-
-    var r = new Resumable({
-    target: '/upload/receive_resumable',
-    headers: {
-      'X-CSRFToken': '{{csrf_token}}',
-      'destination' : selected,
-      }
-    });
-
-    r.assignBrowse(document.getElementById('chunked_upload'));
-    r.assignDrop(document.getElementById('chunked_upload'));
-
-    r.addFiles(e.target.files);
-
-    r.on('fileAdded', function(file, event){
-      //hide file upload bar while upload in progress and show the loading animation
-      $('#uploadForm').hide();
-      $('.loader').show();
-      r.upload();
-    });
-
-    r.on('fileError', function(file, event){
-      console.log('got to error');
-      console.log(event);
-    });
-
-    r.on('fileProgress', function(file, event){
-      console.log('Uploading file');
-      r.upload();
-    });
-
-    r.on('fileSuccess', function(file, event){
-      //show file upload bar while upload in progress and hide the loading animation
-      $('#uploadForm').show();
-      $('.loader').hide();
-      console.log('File uploaded is done');
-    });
-
-});
-
-
-
 </script>
+
