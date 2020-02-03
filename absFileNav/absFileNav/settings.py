@@ -57,13 +57,13 @@ ROOT_URLCONF = 'absFileNav.urls'
 with open('absFileNav/config.json', 'r') as read_file:
     config_dict = json.load(read_file)
     FILE_SYSTEM_ROOT    = config_dict['root_url']
+    
+    #default file location for saved files
+    MEDIA_ROOT = config_dict['root_url']
+
     if len(FILE_SYSTEM_ROOT) == 0:
         print("ROOT FILE SYSTEM LOCATION NOT CONFIGURED, YOU MAY WANT TO SET THIS!!")
         FILE_SYSTEM_ROOT = '/'
-
-
-#default file location for saved files
-MEDIA_ROOT = '/Users/jonathanmartin/Desktop'
 
 TEMPLATES = [
     {
