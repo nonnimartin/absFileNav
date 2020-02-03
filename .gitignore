@@ -9,3 +9,5 @@ absFileNav/absFileNav/config.json
 absFileNav/db.sqlite3
 .*
 !/.gitignore
+*.pyc
+node_modules

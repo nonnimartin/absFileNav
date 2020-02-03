@@ -198,6 +198,16 @@ function addFolder(event, path) {
   return false;
 }
 
+function showLoadingAnimation(){
+    //hide file upload bar while upload in progress and show the loading animation
+    $('#uploadForm').hide();
+    $('.loader').show();
+}
+
+function hideLoadingAnimation(){
+    $('#uploadForm').show();
+    $('.loader').hide();
+}
 
 $('#chunked_upload').change(function(e) {
 
@@ -219,9 +229,7 @@ $('#chunked_upload').change(function(e) {
     r.addFiles(e.target.files);
 
     r.on('fileAdded', function(file, event){
-      //hide file upload bar while upload in progress and show the loading animation
-      $('#uploadForm').hide();
-      $('.loader').show();
+      showLoadingAnimation();
       r.upload();
     });
 
@@ -231,15 +239,17 @@ $('#chunked_upload').change(function(e) {
     });
 
     r.on('fileProgress', function(file, event){
-      console.log('Uploading file');
       r.upload();
     });
 
+    r.on('complete', function(file, event){
+      hideLoadingAnimation();
+      //reload page after upload completes successfully
+      location.reload();
+    })
+
     r.on('fileSuccess', function(file, event){
-      //show file upload bar while upload in progress and hide the loading animation
-      $('#uploadForm').show();
-      $('.loader').hide();
-      console.log('File uploaded is done');
+      console.log('One file uploaded successfully');
     });
 
 });
