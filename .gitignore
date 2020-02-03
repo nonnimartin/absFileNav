@@ -11,3 +11,4 @@ absFileNav/db.sqlite3
 !/.gitignore
 *.pyc
 node_modules
+upload/migrations
