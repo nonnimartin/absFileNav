@@ -35,8 +35,7 @@
     //set checkbox for show files value
     //$("#id_show_files").val("{{show_files}}");
 
-    var rawdata = "{{ json_file_tree|escapejs }}"
-    var data    = rawdata.replace(/'/g, '"');
+    var data = "{{ json_file_tree|escapejs }}"
 
     //Clear saved base folder from user settings
     $( "#clear_button" ).click(function() {
