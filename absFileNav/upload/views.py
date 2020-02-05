@@ -60,6 +60,7 @@ def index(request):
 
     # check for stored settings
     stored_settings     = UserSettings.objects.all()
+    print('stored settings = ' + str(stored_settings))
     has_stored_settings = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST' and request.FILES['myFile']:
@@ -149,30 +150,45 @@ def clear_base_folder(request):
         print('Error writing to database: ' + str(error))
         return HttpResponse('FAILURE')
 
+def delete_file(file_path):
+    pass
+
 def user_settings(request):
 
+    user_settings = SettingsForm()
+    background_image_location = settings.BACKGROUND_IMAGE_LOCATION
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
 
+    if request.method == 'GET':
+        print('user settings = ' + str(user_settings))
+        if has_stored_settings:
+            #if has stored settings, set background_image
+            background_image = stored_settings[0].background_image
+
     if request.method == 'POST':
 
-        show_files  = bool()
-
-        base_folder = request.POST['base_folder']
-        if 'show_files' in request.POST.keys():
-            show_files = request.POST['show_files']
-            # print('show files in here ' + show_files)
-            if show_files == 'on':
-                show_files = True
-
-        # print('post base folder = ' + base_folder)
+        base_folder      = request.POST['base_folder']
 
         save_settings = UserSettings()
         save_settings.id = 1
-        save_settings.show_files  = show_files
-        save_settings.base_folder = base_folder
-        save_settings.last_modified = timezone.now()
-        #print('save settings show files = ' + str(save_settings.show_files))
+        save_settings.base_folder      = base_folder
+        save_settings.last_modified    = timezone.now()
+        background_image_post          = request.FILES['background_image']
+
+        # if saving background image
+        if len(background_image_post.name) > 0:
+            # write background image to background image location
+            try:
+                # open file at destination as binary appending
+                write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
+                for chunk in background_image_post.chunks():
+                    write_bg_image.write(chunk)
+                    # save location of background image to database
+                    save_settings.background_image = background_image_location + '/' + background_image_post.name
+                write_bg_image.close()
+            except Exception as e:
+                print('Error saving settings: ' + str(e))
 
         try:
             save_settings.save()
@@ -180,14 +196,15 @@ def user_settings(request):
         except Exception as e:
             print('Error saving settings: ' + str(e))
 
-    user_settings = SettingsForm()
     context         = dict()
 
     if has_stored_settings:
         #if has stored settings, retrieve them
+        # THIS BLOCK MAY BE UNNEEDED IN POST CONTEXT
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
         context['show_files']         = stored_settings.show_files
+        context['background_image']   = stored_settings.background_image
     else:
         context['show_files']  = False
 

@@ -54,6 +54,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'absFileNav.urls'
 
+BACKGROUND_IMAGE_LOCATION = './upload/background_image'
+
 with open('absFileNav/config.json', 'r') as read_file:
     config_dict = json.load(read_file)
     FILE_SYSTEM_ROOT    = config_dict['root_url']

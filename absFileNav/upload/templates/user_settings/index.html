@@ -7,7 +7,7 @@
 
 <h1>Settings</h1>
 <hr>
-<form action="user_settings" method="post">
+<form action="user_settings" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="file-upload" style="">Set your base folder</div>
         {{ form.path.as_hidden}}
