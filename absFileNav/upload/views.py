@@ -151,7 +151,7 @@ def clear_base_folder(request):
         return HttpResponse('FAILURE')
 
 def delete_file(file_path):
-    pass
+    os.remove(file_path)
 
 def user_settings(request):
 
@@ -180,8 +180,16 @@ def user_settings(request):
         if len(background_image_post.name) > 0:
             # write background image to background image location
             try:
+                # list files in background image directory
+                background_dirs_list = os.listdir(background_image_location)
+
+                # delete files in background image directory
+                for this_file in background_dirs_list:
+                    delete_file(background_image_location + '/' + this_file)
+
                 # open file at destination as binary appending
                 write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
+
                 for chunk in background_image_post.chunks():
                     write_bg_image.write(chunk)
                     # save location of background image to database
