@@ -155,16 +155,10 @@ def delete_file(file_path):
 
 def user_settings(request):
 
-    user_settings = SettingsForm()
+    user_settings    = SettingsForm()
     background_image_location = settings.BACKGROUND_IMAGE_LOCATION
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
-
-    if request.method == 'GET':
-        print('user settings = ' + str(user_settings))
-        if has_stored_settings:
-            #if has stored settings, set background_image
-            background_image = stored_settings[0].background_image
 
     if request.method == 'POST':
 
@@ -189,6 +183,7 @@ def user_settings(request):
 
                 # open file at destination as binary appending
                 write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
+                print('background image location = ' + background_image_location)
 
                 for chunk in background_image_post.chunks():
                     write_bg_image.write(chunk)
@@ -204,14 +199,14 @@ def user_settings(request):
         except Exception as e:
             print('Error saving settings: ' + str(e))
 
-    context         = dict()
+    context          = dict()
 
     if has_stored_settings:
         #if has stored settings, retrieve them
-        # THIS BLOCK MAY BE UNNEEDED IN POST CONTEXT
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
         context['show_files']         = stored_settings.show_files
+        context['background_image']   = stored_settings.background_image
         context['background_image']   = stored_settings.background_image
     else:
         context['show_files']  = False
