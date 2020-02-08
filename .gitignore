@@ -12,3 +12,7 @@ absFileNav/db.sqlite3
 *.pyc
 node_modules
 upload/migrations
+.DS_Store
+../.DS_Store
+upload/migrations/*
+upload/media

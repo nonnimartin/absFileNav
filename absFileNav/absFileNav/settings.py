@@ -136,4 +136,4 @@ STATIC_URL = '/static/'
 # default file location for media
 MEDIA_ROOT = os.path.join(BASE_DIR + '/upload/', 'media/background_image')
 # location for background image
-BACKGROUND_IMAGE_LOCATION = '/background_image/'
+BACKGROUND_IMAGE_LOCATION = BASE_DIR + '/upload/background_image'

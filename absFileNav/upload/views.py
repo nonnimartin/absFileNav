@@ -168,10 +168,15 @@ def user_settings(request):
         save_settings.id = 1
         save_settings.base_folder      = base_folder
         save_settings.last_modified    = timezone.now()
-        background_image_post          = request.FILES['background_image']
+
+        if 'background_image' not in request.FILES.keys():
+            background_image_post_name = str() 
+        else:
+            background_image_post      = request.FILES['background_image']
+            background_image_post_name = background_image_post.name
 
         # if saving background image
-        if len(background_image_post.name) > 0:
+        if len(background_image_post_name) > 0:
             # write background image to background image location
             try:
                 # list files in background image directory
@@ -183,21 +188,23 @@ def user_settings(request):
 
                 # open file at destination as binary appending
                 write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
-                print('background image location = ' + background_image_location)
 
                 for chunk in background_image_post.chunks():
                     write_bg_image.write(chunk)
                     # save location of background image to database
                     save_settings.background_image = background_image_location + '/' + background_image_post.name
+            
                 write_bg_image.close()
             except Exception as e:
                 print('Error saving settings: ' + str(e))
+                print('Exception type 1 : ' + str(sys.exc_info()[0]))
 
         try:
             save_settings.save()
             return redirect('/upload/')
         except Exception as e:
             print('Error saving settings: ' + str(e))
+            print('Exception type 2: ' + str(sys.exc_info()[0]))
 
     context          = dict()
 
