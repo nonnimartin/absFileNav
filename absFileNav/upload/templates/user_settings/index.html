@@ -18,6 +18,9 @@
     <input id="clear_button" type="button" value="Clear Base Folder">
     {% endif %}
     {{form.as_p}}
+    {% if background_image|length > 0 %}
+    <img src="{{background_image}}" name="background_image" width="300"> 
+    {% endif %}
     <hr>
     <input type="submit" value="Save Settings">
     <input type="button" value="Cancel" onclick="window.location.href='/upload/'">

@@ -156,6 +156,8 @@ def user_settings(request):
 
     user_settings    = SettingsForm()
     background_image_location = settings.MEDIA_ROOT + '/background_image'
+    print(background_image_location)
+    background_image_url = '/upload' + settings.MEDIA_URL + 'background_image'
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
 
@@ -191,7 +193,7 @@ def user_settings(request):
                 for chunk in background_image_post.chunks():
                     write_bg_image.write(chunk)
                     # save location of background image to database
-                    save_settings.background_image = background_image_location + '/' + background_image_post.name
+                    save_settings.background_image = background_image_url + '/' + background_image_post.name
             
                 write_bg_image.close()
             except Exception as e:
@@ -212,7 +214,6 @@ def user_settings(request):
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
         context['show_files']         = stored_settings.show_files
-        context['background_image']   = stored_settings.background_image
         context['background_image']   = stored_settings.background_image
     else:
         context['show_files']  = False
