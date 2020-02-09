@@ -154,30 +154,32 @@ def delete_file(file_path):
 
 def user_settings(request):
 
-    user_settings    = SettingsForm()
+    user_settings             = SettingsForm()
     background_image_location = settings.MEDIA_ROOT + '/background_image'
-    print(background_image_location)
-    background_image_url = '/upload' + settings.MEDIA_URL + 'background_image'
-    stored_settings     = UserSettings.objects.all()
-    has_stored_settings = True if len(stored_settings) > 0 else False
+    background_image_url      = '/upload' + settings.MEDIA_URL + 'background_image'
+    stored_settings           = UserSettings.objects.all()
+    has_stored_settings       = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST':
 
-        base_folder      = request.POST['base_folder']
-
-        save_settings = UserSettings()
-        save_settings.id = 1
+        base_folder                    = request.POST['base_folder']
+        save_settings                  = UserSettings()
+        save_settings.id               = 1
         save_settings.base_folder      = base_folder
         save_settings.last_modified    = timezone.now()
 
         if 'background_image' not in request.FILES.keys():
-            background_image_post_name = str() 
+            overwrite_background           = False
+            stored_settings                = stored_settings[0]
+            save_settings.background_image = stored_settings.background_image
+            background_image_post_name     = str() 
         else:
+            overwrite_background       = True
             background_image_post      = request.FILES['background_image']
             background_image_post_name = background_image_post.name
 
         # if saving background image
-        if len(background_image_post_name) > 0:
+        if len(background_image_post_name) > 0 and overwrite_background:
             # write background image to background image location
             try:
                 # list files in background image directory
