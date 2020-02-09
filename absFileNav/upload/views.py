@@ -155,7 +155,7 @@ def delete_file(file_path):
 def user_settings(request):
 
     user_settings    = SettingsForm()
-    background_image_location = settings.MEDIA_ROOT
+    background_image_location = settings.MEDIA_ROOT + '/background_image'
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
 
