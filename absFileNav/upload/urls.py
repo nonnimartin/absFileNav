@@ -11,4 +11,4 @@ urlpatterns = [
     path('user_settings', views.user_settings, name='user_settings'),
     path('clear_base_folder', views.clear_base_folder, name='clear_base_folder'),
     path('receive_resumable', views.receive_resumable, name='receive_resumable'),
-] + static(settings.BACKGROUND_IMAGE_LOCATION, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

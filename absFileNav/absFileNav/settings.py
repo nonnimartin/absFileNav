@@ -134,6 +134,6 @@ STATIC_URL = '/static/'
 # this is working with http://localhost:8000/upload/background_image/Aeon.Flux.1995.S03E05.The.Demiurge.jpeg
 # but it seems like this configuration is wrong 
 # default file location for media
-MEDIA_ROOT = os.path.join(BASE_DIR + '/upload/', 'media/background_image')
+MEDIA_ROOT = os.path.join(BASE_DIR + '/upload/', 'media/files')
 # location for background image
-BACKGROUND_IMAGE_LOCATION = BASE_DIR + '/upload/background_image'
+MEDIA_URL = '/files/'

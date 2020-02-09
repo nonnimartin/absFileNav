@@ -60,7 +60,6 @@ def index(request):
 
     # check for stored settings
     stored_settings     = UserSettings.objects.all()
-    print('stored settings = ' + str(stored_settings))
     has_stored_settings = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST' and request.FILES['myFile']:
@@ -156,7 +155,7 @@ def delete_file(file_path):
 def user_settings(request):
 
     user_settings    = SettingsForm()
-    background_image_location = settings.BACKGROUND_IMAGE_LOCATION
+    background_image_location = settings.MEDIA_ROOT
     stored_settings     = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
 
