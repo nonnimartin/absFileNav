@@ -8,6 +8,7 @@ from django.conf import settings
 import hashlib
 from functools import partial
 from util import createTree
+import forms
 from forms import FileUploadPath
 import json
 import os, errno
@@ -121,14 +122,19 @@ def index(request):
         payload = {'success': True}
         return HttpResponse(json.dumps(payload), content_type='application/json')
 
-    #file upload path form
+    # file upload path form
     path_form = FileUploadPath()
 
-    #page template and view variables
+    # page template and view variables
     template = loader.get_template('upload/index.html')
 
-    #get json of file system for saving and set in view
+    # get json of file system for saving and set in view
     context = dict()
+
+    # set background image if present
+    if len(stored_settings[0].background_image) > 0:
+        context['background_image'] = stored_settings[0].background_image
+
     context['path_selected']  = False
     context['form'] = path_form
     if has_stored_settings:
@@ -167,6 +173,8 @@ def user_settings(request):
         save_settings.id               = 1
         save_settings.base_folder      = base_folder
         save_settings.last_modified    = timezone.now()
+
+        print(request.POST.get('background_image_path'))
 
         if 'background_image' not in request.FILES.keys():
             overwrite_background           = False
@@ -220,8 +228,8 @@ def user_settings(request):
     else:
         context['show_files']  = False
 
-    context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
-    context['form'] = user_settings
+    context['json_file_tree']                            = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
+    context['form']                                      = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
 
