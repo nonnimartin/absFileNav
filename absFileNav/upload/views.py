@@ -173,21 +173,29 @@ def user_settings(request):
         save_settings.id               = 1
         save_settings.base_folder      = base_folder
         save_settings.last_modified    = timezone.now()
-
-        print(request.POST.get('background_image_path'))
+            
 
         if 'background_image' not in request.FILES.keys():
-            overwrite_background           = False
+            overwrite_background_img       = False
             stored_settings                = stored_settings[0]
             save_settings.background_image = stored_settings.background_image
             background_image_post_name     = str() 
         else:
-            overwrite_background       = True
             background_image_post      = request.FILES['background_image']
             background_image_post_name = background_image_post.name
+            
+        # set to overwrite background image if true
+        overwrite_background_img = request.POST['overwrite_background_img']
+        print('overwrite = ' + str(overwrite_background_img))
+        if overwrite_background_img == "true":
+            print('got to overwrite')
+            save_settings.background_image = ''
+            print('save settings = ' + str(save_settings.background_image))
+        else:
+            overwrite_background_img = False
 
         # if saving background image
-        if len(background_image_post_name) > 0 and overwrite_background:
+        if len(background_image_post_name) > 0 and not overwrite_background_img:
             # write background image to background image location
             try:
                 # list files in background image directory
@@ -211,6 +219,7 @@ def user_settings(request):
                 print('Exception type 1 : ' + str(sys.exc_info()[0]))
 
         try:
+            print('save settings = ' + str(save_settings.background_image))
             save_settings.save()
             return redirect('/upload/')
         except Exception as e:

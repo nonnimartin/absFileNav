@@ -17,10 +17,15 @@
 <!-- loading animation -->
 <div class="loader" hidden>Loading...</div>
 <button type="button" id="settings-button" onclick="window.location.href='/upload/user_settings'">Settings</button>
+
+<!-- show background image if set -->
+{% if background_image|length > 0 %}
 <header class="main-header" role="banner">
   <img src="{{background_image}}" width="100%"/>
 </header>
+{% endif %}
 <br>
+
 <form method="post" enctype="multipart/form-data" action="/upload/" id="uploadForm">
     {% csrf_token %}
     <hr>

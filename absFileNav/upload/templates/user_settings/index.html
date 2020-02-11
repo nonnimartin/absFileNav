@@ -20,7 +20,7 @@
     {{form.base_folder}}
     <hr>
     {{form.background_image}}
-    {{form.background_image_path.as_hidden}}
+    {{form.overwrite_background_img.as_hidden}}
     {% if background_image|length > 0 %}
     <img src="{{background_image}}" id="background_image_preview" width="300"> 
     {% endif %}
@@ -33,9 +33,6 @@
 </form>
 
 <script type="text/javascript">
-
-    //set background image
-    $("#background_image_path").val("test");
 
     //make base url read only
     $("#id_base_folder").prop("readonly", true);
@@ -107,7 +104,6 @@
       reader.onload = function(e) {
         $('#background_image_preview').attr('src', e.target.result);
       }
-      
       reader.readAsDataURL(input.files[0]);
     }
   }
@@ -115,10 +111,17 @@
   $("#id_background_image").change(function() {
     readURL(this);
   });
+
+  //set form hidden to send overwrite background image, if it is cleared
+  function clear_background_image(){
+      $("#id_overwrite_background_img").val(true);
+  }
   
   $("#clear_background").on('click', (function() {
     $('#background_image_preview').attr('src', '');
     $('#id_background_image').val('');
+    $('#background_image_preview').hide();
+    clear_background_image();
   }));
 
 </script>
