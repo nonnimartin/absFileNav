@@ -8,6 +8,7 @@ from django.conf import settings
 import hashlib
 from functools import partial
 from util import createTree
+import forms
 from forms import FileUploadPath
 import json
 import os, errno
@@ -18,6 +19,7 @@ from django.views.generic.base import TemplateView
 from django.core.files.storage import default_storage
 import sys
 from shutil import rmtree
+from shutil import move
 
 def new_path(request):
     if request.method == 'POST':
@@ -99,7 +101,6 @@ def index(request):
                     upfile.path = path
 
                 newPath = str(path) + '/' + str(replace_spaces(this_file.name))
-                print('Writing to path: ' + newPath)
 
                 #open and write file
                 with open(newPath, 'wb+') as destination:
@@ -121,14 +122,19 @@ def index(request):
         payload = {'success': True}
         return HttpResponse(json.dumps(payload), content_type='application/json')
 
-    #file upload path form
+    # file upload path form
     path_form = FileUploadPath()
 
-    #page template and view variables
+    # page template and view variables
     template = loader.get_template('upload/index.html')
 
-    #get json of file system for saving and set in view
+    # get json of file system for saving and set in view
     context = dict()
+
+    # set background image if present
+    if len(stored_settings[0].background_image) > 0:
+        context['background_image'] = stored_settings[0].background_image
+
     context['path_selected']  = False
     context['form'] = path_form
     if has_stored_settings:
@@ -149,50 +155,86 @@ def clear_base_folder(request):
         print('Error writing to database: ' + str(error))
         return HttpResponse('FAILURE')
 
+def delete_file(file_path):
+    os.remove(file_path)
+
 def user_settings(request):
 
-    stored_settings     = UserSettings.objects.all()
-    has_stored_settings = True if len(stored_settings) > 0 else False
+    user_settings             = SettingsForm()
+    background_image_location = settings.MEDIA_ROOT + '/background_image'
+    background_image_url      = '/upload' + settings.MEDIA_URL + 'background_image'
+    stored_settings           = UserSettings.objects.all()
+    has_stored_settings       = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST':
 
-        show_files  = bool()
+        base_folder                    = request.POST['base_folder']
+        save_settings                  = UserSettings()
+        save_settings.id               = 1
+        save_settings.base_folder      = base_folder
+        save_settings.last_modified    = timezone.now()
+            
 
-        base_folder = request.POST['base_folder']
-        if 'show_files' in request.POST.keys():
-            show_files = request.POST['show_files']
-            # print('show files in here ' + show_files)
-            if show_files == 'on':
-                show_files = True
+        if 'background_image' not in request.FILES.keys():
+            overwrite_background_img       = False
+            stored_settings                = stored_settings[0]
+            save_settings.background_image = stored_settings.background_image
+            background_image_post_name     = str() 
+        else:
+            background_image_post      = request.FILES['background_image']
+            background_image_post_name = background_image_post.name
+            
+        # set to overwrite background image if true
+        overwrite_background_img = request.POST['overwrite_background_img']
+        if overwrite_background_img == "true":
+            save_settings.background_image = ''
+        else:
+            overwrite_background_img = False
 
-        # print('post base folder = ' + base_folder)
+        # if saving background image
+        if len(background_image_post_name) > 0 and not overwrite_background_img:
+            # write background image to background image location
+            try:
+                # list files in background image directory
+                background_dirs_list = os.listdir(background_image_location)
 
-        save_settings = UserSettings()
-        save_settings.id = 1
-        save_settings.show_files  = show_files
-        save_settings.base_folder = base_folder
-        save_settings.last_modified = timezone.now()
-        #print('save settings show files = ' + str(save_settings.show_files))
+                # delete files in background image directory
+                for this_file in background_dirs_list:
+                    delete_file(background_image_location + '/' + this_file)
+
+                # open file at destination as binary appending
+                write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
+
+                for chunk in background_image_post.chunks():
+                    write_bg_image.write(chunk)
+                    # save location of background image to database
+                    save_settings.background_image = background_image_url + '/' + background_image_post.name
+            
+                write_bg_image.close()
+            except Exception as e:
+                print('Error saving settings: ' + str(e))
+                print('Exception type 1 : ' + str(sys.exc_info()[0]))
 
         try:
             save_settings.save()
             return redirect('/upload/')
         except Exception as e:
             print('Error saving settings: ' + str(e))
+            print('Exception type 2: ' + str(sys.exc_info()[0]))
 
-    user_settings = SettingsForm()
-    context         = dict()
+    context          = dict()
 
     if has_stored_settings:
         #if has stored settings, retrieve them
         stored_settings               = stored_settings[0]
         context['base_folder']        = stored_settings.base_folder
         context['show_files']         = stored_settings.show_files
+        context['background_image']   = stored_settings.background_image
     else:
         context['show_files']  = False
 
-    context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
-    context['form'] = user_settings
+    context['json_file_tree']                            = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
+    context['form']                                      = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
 
@@ -291,9 +333,10 @@ def receive_resumable(request):
         total_chunks     = int(request.POST.get('resumableTotalChunks'))
         file_root_name   = this_file.name + '-TMPFILE-'
         tmp_file_name    = file_root_name +  str(chunk_num)
-        tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        #tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dir          = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dest         = tmp_dir + tmp_file_name
-
+        
         try:
             if not dir_exists(tmp_dir):
                 # if local tmp dir doesn't exist, make it so
@@ -320,6 +363,8 @@ def receive_resumable(request):
             if get_file_size(file_root_name) == 0:
                 # concatenate file pieces and write to a single file
                 concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
+                # move file from temporary location to intended destination
+                #shutil.move(destination_path, )
                 #clear maps from memory to avoid memory leak
                 delete_keys(file_root_name)
             

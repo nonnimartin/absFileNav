@@ -7,7 +7,7 @@
 
 <h1>Settings</h1>
 <hr>
-<form action="user_settings" method="post">
+<form action="user_settings" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="file-upload" style="">Set your base folder</div>
         {{ form.path.as_hidden}}
@@ -17,7 +17,16 @@
     {% if base_folder|length > 0 %}
     <input id="clear_button" type="button" value="Clear Base Folder">
     {% endif %}
-    {{form.as_p}}
+    {{form.base_folder}}
+    <hr>
+    {{form.background_image}}
+    {{form.overwrite_background_img.as_hidden}}
+    {% if background_image|length > 0 %}
+    <img src="{{background_image}}" id="background_image_preview" width="300"> 
+    {% endif %}
+    <br>
+    <br>
+    <input id="clear_background" display="block" type="button" value="Clear Background Image">
     <hr>
     <input type="submit" value="Save Settings">
     <input type="button" value="Cancel" onclick="window.location.href='/upload/'">
@@ -68,24 +77,53 @@
  function readURL(input) {
   if (input.files && input.files[0]) {
 
-    var reader = new FileReader();
+      var reader = new FileReader();
 
-    reader.onload = function(e) {
-      $('.image-upload-wrap').hide();
+      reader.onload = function(e) {
+        $('.image-upload-wrap').hide();
 
-      $('.file-upload-image').attr('src', e.target.result);
-      $('.file-upload-content').show();
+        $('.file-upload-image').attr('src', e.target.result);
+        $('.file-upload-content').show();
 
-      $('.image-title').html(input.files[0].name);
-    };
+        $('.image-title').html(input.files[0].name);
+      };
 
-    reader.readAsDataURL(input.files[0]);
-    enableButton()
+      reader.readAsDataURL(input.files[0]);
+      enableButton()
 
-  } else {
-    removeUpload();
+    } else {
+      removeUpload();
+    }
   }
-}
+
+  //provide preview of the image being added
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      
+      reader.onload = function(e) {
+        $('#background_image_preview').attr('src', e.target.result);
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  $("#id_background_image").change(function() {
+    readURL(this);
+  });
+
+  //set form hidden to send overwrite background image, if it is cleared
+  function clear_background_image(){
+      $("#id_overwrite_background_img").val(true);
+  }
+  
+  $("#clear_background").on('click', (function() {
+    $('#background_image_preview').attr('src', '');
+    $('#id_background_image').val('');
+    $('#background_image_preview').hide();
+    clear_background_image();
+  }));
+
 </script>
 
 

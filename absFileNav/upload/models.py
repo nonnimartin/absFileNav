@@ -7,7 +7,7 @@ class uploadFile(models.Model):
     checksum = models.CharField(max_length=32)
 
 class UserSettings(models.Model):
-    base_folder   = models.CharField(max_length=4096)
-    last_modified = models.DateTimeField(auto_now_add=True)
-    show_files    = models.BooleanField(default=False)
-
+    base_folder      = models.CharField(max_length=4096)
+    last_modified    = models.DateTimeField(auto_now_add=True)
+    show_files       = models.BooleanField(default=False)
+    background_image = models.CharField(max_length=4096, default='')
