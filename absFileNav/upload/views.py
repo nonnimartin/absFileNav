@@ -19,6 +19,7 @@ from django.views.generic.base import TemplateView
 from django.core.files.storage import default_storage
 import sys
 from shutil import rmtree
+from shutil import move
 
 def new_path(request):
     if request.method == 'POST':
@@ -100,7 +101,6 @@ def index(request):
                     upfile.path = path
 
                 newPath = str(path) + '/' + str(replace_spaces(this_file.name))
-                print('Writing to path: ' + newPath)
 
                 #open and write file
                 with open(newPath, 'wb+') as destination:
@@ -186,11 +186,8 @@ def user_settings(request):
             
         # set to overwrite background image if true
         overwrite_background_img = request.POST['overwrite_background_img']
-        print('overwrite = ' + str(overwrite_background_img))
         if overwrite_background_img == "true":
-            print('got to overwrite')
             save_settings.background_image = ''
-            print('save settings = ' + str(save_settings.background_image))
         else:
             overwrite_background_img = False
 
@@ -219,7 +216,6 @@ def user_settings(request):
                 print('Exception type 1 : ' + str(sys.exc_info()[0]))
 
         try:
-            print('save settings = ' + str(save_settings.background_image))
             save_settings.save()
             return redirect('/upload/')
         except Exception as e:
@@ -337,9 +333,10 @@ def receive_resumable(request):
         total_chunks     = int(request.POST.get('resumableTotalChunks'))
         file_root_name   = this_file.name + '-TMPFILE-'
         tmp_file_name    = file_root_name +  str(chunk_num)
-        tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        #tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dir          = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dest         = tmp_dir + tmp_file_name
-
+        
         try:
             if not dir_exists(tmp_dir):
                 # if local tmp dir doesn't exist, make it so
@@ -366,6 +363,8 @@ def receive_resumable(request):
             if get_file_size(file_root_name) == 0:
                 # concatenate file pieces and write to a single file
                 concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
+                # move file from temporary location to intended destination
+                #shutil.move(destination_path, )
                 #clear maps from memory to avoid memory leak
                 delete_keys(file_root_name)
             

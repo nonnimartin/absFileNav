@@ -135,5 +135,7 @@ STATIC_URL = '/static/'
 # but it seems like this configuration is wrong 
 # default file location for media
 MEDIA_ROOT = os.path.join(BASE_DIR + '/upload/', 'media/files')
-# location for background image
+# location for managing files
 MEDIA_URL = '/files/'
+
+
