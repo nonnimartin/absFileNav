@@ -216,8 +216,6 @@ function hideLoadingAnimation(){
 }
 
 $('#chunked_upload').change(function(e) {
-   console.log($('#chunked_upload').prop('files')[0]);
-   console.log(JSON.stringify($('#chunked_upload')));
 
     if (typeof selected == 'undefined'){
       alert('Please select a destination.')
@@ -231,11 +229,8 @@ $('#chunked_upload').change(function(e) {
       }
     });
 
-    r.assignBrowse(document.getElementById('chunked_upload'), true);
+    r.assignBrowse(document.getElementById('chunked_upload'));
     r.assignDrop(document.getElementById('chunked_upload'));
-    
-    console.log('assign drop');
-    console.log(JSON.stringify(r));
 
     r.addFiles(e.target.files);
 

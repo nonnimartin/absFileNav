@@ -322,20 +322,23 @@ def delete_keys(tmp_file_name):
 def receive_resumable(request):
 
     if request.method == 'POST':
-        this_file        = request.FILES['file']
-        file_name        = this_file.name
-        destination_dir  = str(request.headers['destination'])
-        destination_path = destination_dir + '/' + this_file.name
-        chunk_size       = str(request.POST.get('resumableChunkSize'))
-        chunk_num        = int(request.POST.get('resumableChunkNumber'))
-        file_total_size  = int(request.POST.get('resumableTotalSize'))
-        current_size     = int(request.POST.get('resumableCurrentChunkSize'))
-        total_chunks     = int(request.POST.get('resumableTotalChunks'))
-        file_root_name   = this_file.name + '-TMPFILE-'
-        tmp_file_name    = file_root_name +  str(chunk_num)
-        #tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
-        tmp_dir          = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
-        tmp_dest         = tmp_dir + tmp_file_name
+        this_file         = request.FILES['file']
+        file_name         = this_file.name
+        destination_dir   = str(request.headers['destination'])
+        destination_path  = destination_dir + '/' + this_file.name
+        chunk_size        = str(request.POST.get('resumableChunkSize'))
+        chunk_num         = int(request.POST.get('resumableChunkNumber'))
+        file_total_size   = int(request.POST.get('resumableTotalSize'))
+        current_size      = int(request.POST.get('resumableCurrentChunkSize'))
+        total_chunks      = int(request.POST.get('resumableTotalChunks'))
+        res_relative_path = str(request.POST.get('resumableRelativePath'))
+        file_root_name    = this_file.name + '-TMPFILE-'
+        tmp_file_name     = file_root_name +  str(chunk_num)
+        tmp_dir           = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dest          = tmp_dir + tmp_file_name
+
+        # use relative path to write while preserving directory structure
+        print('resumable relative path = ' + res_relative_path)
         
         try:
             if not dir_exists(tmp_dir):
