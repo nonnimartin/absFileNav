@@ -323,7 +323,12 @@ def receive_resumable(request):
 
     if request.method == 'POST':
         this_file         = request.FILES['file']
-        file_name         = this_file.name
+        #file_name         = this_file.name
+        # use relative path to write while preserving directory structure
+        # will have to create directories if nested
+        print('resumable relative path = ' + res_relative_path)
+        file_name = res_relative_path
+
         destination_dir   = str(request.headers['destination'])
         destination_path  = destination_dir + '/' + this_file.name
         chunk_size        = str(request.POST.get('resumableChunkSize'))
@@ -336,9 +341,6 @@ def receive_resumable(request):
         tmp_file_name     = file_root_name +  str(chunk_num)
         tmp_dir           = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dest          = tmp_dir + tmp_file_name
-
-        # use relative path to write while preserving directory structure
-        print('resumable relative path = ' + res_relative_path)
         
         try:
             if not dir_exists(tmp_dir):
