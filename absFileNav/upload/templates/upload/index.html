@@ -40,7 +40,7 @@
     <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
     <div class="file-upload">
       <div class="image-upload-wrap">
-          <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
+          <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" webkitdirectory directory multiple>
           <div id="button-text">Drag and drop a file/s to Upload</div>
           <div class="file-upload-content">
         </div>
@@ -216,6 +216,8 @@ function hideLoadingAnimation(){
 }
 
 $('#chunked_upload').change(function(e) {
+   console.log($('#chunked_upload').prop('files')[0]);
+   console.log(JSON.stringify($('#chunked_upload')));
 
     if (typeof selected == 'undefined'){
       alert('Please select a destination.')
@@ -229,8 +231,11 @@ $('#chunked_upload').change(function(e) {
       }
     });
 
-    r.assignBrowse(document.getElementById('chunked_upload'));
+    r.assignBrowse(document.getElementById('chunked_upload'), true);
     r.assignDrop(document.getElementById('chunked_upload'));
+    
+    console.log('assign drop');
+    console.log(JSON.stringify(r));
 
     r.addFiles(e.target.files);
 
@@ -239,8 +244,10 @@ $('#chunked_upload').change(function(e) {
       r.upload();
     });
 
-    r.on('fileError', function(file, event){
-      console.log('got to error');
+    r.on('fileError', function(file, message){
+      r.on('error', function(message, file){
+        console.log(JSON.stringify(message));
+      });
       console.log(event);
     });
 
