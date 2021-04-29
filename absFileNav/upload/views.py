@@ -11,7 +11,8 @@ from util import createTree
 import forms
 from forms import FileUploadPath
 import json
-import os, errno
+import os
+import errno
 from upload.upload_forms import SettingsForm
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -21,13 +22,14 @@ import sys
 from shutil import rmtree
 from shutil import move
 
+
 def new_path(request):
     if request.method == 'POST':
         body_string = request.body
-        body        = json.loads(body_string.decode('utf-8'))
+        body = json.loads(body_string.decode('utf-8'))
         new_path = body['newPath']
 
-        #write new directory to file system
+        # write new directory to file system
         new_dir = create_dir(new_path)
 
         if new_dir:
@@ -39,13 +41,14 @@ def new_path(request):
     else:
         return HttpResponse('{}', content_type='application/json')
 
+
 def delete_path(request):
     if request.method == 'POST':
         body_string = request.body
-        body        = json.loads(body_string)
+        body = json.loads(body_string)
         delete_path = body['delete_path']
 
-        #write new directory to file system
+        # write new directory to file system
         #delete_path = create_dir(delete_path)
 
         if new_dir:
@@ -61,7 +64,7 @@ def delete_path(request):
 def index(request):
 
     # check for stored settings
-    stored_settings     = UserSettings.objects.all()
+    stored_settings = UserSettings.objects.all()
     has_stored_settings = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST' and request.FILES['myFile']:
@@ -69,7 +72,7 @@ def index(request):
         this_form = FileUploadPath(request.POST)
         files_list = request.FILES.getlist('myFile')
 
-        #initialize path variable
+        # initialize path variable
         path = False
 
         # check whether it's valid:
@@ -92,7 +95,8 @@ def index(request):
                     path = settings.MEDIA_ROOT
 
                     fs = FileSystemStorage(settings.FILE_SYSTEM_ROOT)
-                    filename = fs.save(clean_file_name(this_file.name), this_file)
+                    filename = fs.save(clean_file_name(
+                        this_file.name), this_file)
 
                     # store uploaded file data in db
                     upfile = uploadFile()
@@ -102,7 +106,7 @@ def index(request):
 
                 newPath = str(path) + '/' + str(replace_spaces(this_file.name))
 
-                #open and write file
+                # open and write file
                 with open(newPath, 'wb+') as destination:
                     for chunk in this_file.chunks():
                         destination.write(chunk)
@@ -114,7 +118,6 @@ def index(request):
                 print('Error writing file: ' + str(e))
                 payload = {'success': False, 'error': str(e)}
                 return HttpResponse(json.dumps(payload), content_type='application/json')
-
 
             upfile.checksum = hash_file(this_file.open())
             # save uploaded file
@@ -130,22 +133,19 @@ def index(request):
 
     # get json of file system for saving and set in view
     context = dict()
-
-    # set background image if present
-    if len(stored_settings[0].background_image) > 0:
-        context['background_image'] = stored_settings[0].background_image
-
-    context['path_selected']  = False
+    context['path_selected'] = False
     context['form'] = path_form
     if has_stored_settings:
         context['base_folder'] = str(stored_settings[0].base_folder)
-    context['json_file_tree'] = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
-
+    context['json_file_tree'] = createTree.get_tree(
+        settings.FILE_SYSTEM_ROOT, True)
+    print("file tree = " + str(context['json_file_tree']))
 
     return HttpResponse(template.render(context, request))
 
+
 def clear_base_folder(request):
-    settings  = UserSettings.objects.get(id=1)
+    settings = UserSettings.objects.get(id=1)
 
     try:
         settings.base_folder = ''
@@ -155,65 +155,24 @@ def clear_base_folder(request):
         print('Error writing to database: ' + str(error))
         return HttpResponse('FAILURE')
 
+
 def delete_file(file_path):
     os.remove(file_path)
 
+
 def user_settings(request):
 
-    user_settings             = SettingsForm()
-    background_image_location = settings.MEDIA_ROOT + '/background_image'
-    background_image_url      = '/upload' + settings.MEDIA_URL + 'background_image'
-    stored_settings           = UserSettings.objects.all()
-    has_stored_settings       = True if len(stored_settings) > 0 else False
+    user_settings = SettingsForm()
+    stored_settings = UserSettings.objects.all()
+    has_stored_settings = True if len(stored_settings) > 0 else False
 
     if request.method == 'POST':
 
-        base_folder                    = request.POST['base_folder']
-        save_settings                  = UserSettings()
-        save_settings.id               = 1
-        save_settings.base_folder      = base_folder
-        save_settings.last_modified    = timezone.now()
-            
-
-        if 'background_image' not in request.FILES.keys():
-            overwrite_background_img       = False
-            stored_settings                = stored_settings[0]
-            save_settings.background_image = stored_settings.background_image
-            background_image_post_name     = str() 
-        else:
-            background_image_post      = request.FILES['background_image']
-            background_image_post_name = background_image_post.name
-            
-        # set to overwrite background image if true
-        overwrite_background_img = request.POST['overwrite_background_img']
-        if overwrite_background_img == "true":
-            save_settings.background_image = ''
-        else:
-            overwrite_background_img = False
-
-        # if saving background image
-        if len(background_image_post_name) > 0 and not overwrite_background_img:
-            # write background image to background image location
-            try:
-                # list files in background image directory
-                background_dirs_list = os.listdir(background_image_location)
-
-                # delete files in background image directory
-                for this_file in background_dirs_list:
-                    delete_file(background_image_location + '/' + this_file)
-
-                # open file at destination as binary appending
-                write_bg_image = open(background_image_location + '/' + background_image_post.name, 'ab')
-
-                for chunk in background_image_post.chunks():
-                    write_bg_image.write(chunk)
-                    # save location of background image to database
-                    save_settings.background_image = background_image_url + '/' + background_image_post.name
-            
-                write_bg_image.close()
-            except Exception as e:
-                print('Error saving settings: ' + str(e))
-                print('Exception type 1 : ' + str(sys.exc_info()[0]))
+        base_folder = request.POST['base_folder']
+        save_settings = UserSettings()
+        save_settings.id = 1
+        save_settings.base_folder = base_folder
+        save_settings.last_modified = timezone.now()
 
         try:
             save_settings.save()
@@ -222,28 +181,31 @@ def user_settings(request):
             print('Error saving settings: ' + str(e))
             print('Exception type 2: ' + str(sys.exc_info()[0]))
 
-    context          = dict()
+    context = dict()
 
     if has_stored_settings:
-        #if has stored settings, retrieve them
-        stored_settings               = stored_settings[0]
-        context['base_folder']        = stored_settings.base_folder
-        context['show_files']         = stored_settings.show_files
-        context['background_image']   = stored_settings.background_image
+        # if has stored settings, retrieve them
+        stored_settings = stored_settings[0]
+        context['base_folder'] = stored_settings.base_folder
+        context['show_files'] = stored_settings.show_files
     else:
-        context['show_files']  = False
+        context['show_files'] = False
 
-    context['json_file_tree']                            = createTree.get_tree(settings.FILE_SYSTEM_ROOT, True)
-    context['form']                                      = user_settings
+    context['json_file_tree'] = createTree.get_tree(
+        settings.FILE_SYSTEM_ROOT, True)
+    context['form'] = user_settings
     template = loader.get_template('user_settings/index.html')
     return HttpResponse(template.render(context, request))
+
 
 def replace_spaces(this_string):
     return this_string.replace(' ', '_')
 
+
 def clean_file_name(file_name):
     thisString = replace_spaces(file_name)
     return thisString
+
 
 def create_dir(dir_path):
     try:
@@ -253,6 +215,7 @@ def create_dir(dir_path):
         if e.errno != errno.EEXIST:
             raise
 
+
 def delete_dir_recursively(dir_path):
     try:
         rmtree(dir_path)
@@ -260,34 +223,40 @@ def delete_dir_recursively(dir_path):
     except:
         print('Exception type : ' + str(sys.exc_info()[0]))
 
+
 def dir_exists(dir_path):
     return os.path.exists(dir_path)
 
+
 # store a map of each unique file id and an int for how many more bytes it needs
 chunks_map = dict()
-path_map   = dict()
+path_map = dict()
+
 
 def register_chunk(tmp_file_name, file_size, current_size):
     chunks_map[tmp_file_name] = file_size - current_size
 
+
 def reduce_file_size(tmp_file_name, current_size):
     chunks_map[tmp_file_name] = chunks_map[tmp_file_name] - current_size
+
 
 def get_file_size(tmp_file_name):
     return chunks_map[tmp_file_name]
 
+
 def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, destination):
-    
+
     files_map = dict()
-    list_dir  = os.listdir(file_tmp_dir) 
+    list_dir = os.listdir(file_tmp_dir)
 
     # get list of numbers between 0 and total_chunks
     chunks_list = list(list(range(1, total_chunks + 1)))
-    
+
     # construct mapping of numbers to files, organizing files into ordered listing
     for item in list_dir:
         files_map[int(item.split('TMPFILE-')[1])] = item
-    
+
     try:
         # open file at destination as binary appending
         write_file = open(destination, 'ab')
@@ -295,11 +264,11 @@ def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, de
         write_file_path = destination_dir + '/' + file_name
 
         # write each file to the end of the file at destination location
-        write_file  = open(write_file_path, 'ab')
+        write_file = open(write_file_path, 'ab')
 
         for chunk_num in chunks_list:
             # read file of this num
-            read_file_name  = file_tmp_dir + files_map[chunk_num]
+            read_file_name = file_tmp_dir + files_map[chunk_num]
 
             # open partial file to read each iteration
             with open(read_file_name, mode='rb') as read_file:
@@ -310,7 +279,7 @@ def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, de
                 read_file.close()
         write_file.close()
         delete_dir_recursively(file_tmp_dir)
-    
+
     except:
         print('Exception type : ' + str(sys.exc_info()[0]))
         print('Exception info : ' + str(sys.exc_info()[3]))
@@ -319,24 +288,25 @@ def concatenate_files(file_name, destination_dir, file_tmp_dir, total_chunks, de
 def delete_keys(tmp_file_name):
     del chunks_map[tmp_file_name]
 
+
 def receive_resumable(request):
 
     if request.method == 'POST':
-        this_file        = request.FILES['file']
-        file_name        = this_file.name
-        destination_dir  = str(request.headers['destination'])
+        this_file = request.FILES['file']
+        file_name = this_file.name
+        destination_dir = str(request.headers['destination'])
         destination_path = destination_dir + '/' + this_file.name
-        chunk_size       = str(request.POST.get('resumableChunkSize'))
-        chunk_num        = int(request.POST.get('resumableChunkNumber'))
-        file_total_size  = int(request.POST.get('resumableTotalSize'))
-        current_size     = int(request.POST.get('resumableCurrentChunkSize'))
-        total_chunks     = int(request.POST.get('resumableTotalChunks'))
-        file_root_name   = this_file.name + '-TMPFILE-'
-        tmp_file_name    = file_root_name +  str(chunk_num)
+        chunk_size = str(request.POST.get('resumableChunkSize'))
+        chunk_num = int(request.POST.get('resumableChunkNumber'))
+        file_total_size = int(request.POST.get('resumableTotalSize'))
+        current_size = int(request.POST.get('resumableCurrentChunkSize'))
+        total_chunks = int(request.POST.get('resumableTotalChunks'))
+        file_root_name = this_file.name + '-TMPFILE-'
+        tmp_file_name = file_root_name + str(chunk_num)
         #tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
-        tmp_dir          = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
-        tmp_dest         = tmp_dir + tmp_file_name
-        
+        tmp_dir = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
+        tmp_dest = tmp_dir + tmp_file_name
+
         try:
             if not dir_exists(tmp_dir):
                 # if local tmp dir doesn't exist, make it so
@@ -351,23 +321,24 @@ def receive_resumable(request):
 
                 for chunk in this_file.chunks():
                     destination.write(chunk)
-                
+
             if file_root_name not in chunks_map.keys():
                 # add tmp file name if not in map
                 register_chunk(file_root_name, file_total_size, current_size)
             else:
                 # reduce total size remaining in map
                 reduce_file_size(file_root_name, current_size)
-            
+
             # if size of remaining chunks is 0
             if get_file_size(file_root_name) == 0:
                 # concatenate file pieces and write to a single file
-                concatenate_files(file_name, destination_dir, tmp_dir, total_chunks, destination_path)
+                concatenate_files(file_name, destination_dir,
+                                  tmp_dir, total_chunks, destination_path)
                 # move file from temporary location to intended destination
                 #shutil.move(destination_path, )
-                #clear maps from memory to avoid memory leak
+                # clear maps from memory to avoid memory leak
                 delete_keys(file_root_name)
-            
+
             return HttpResponse(status=200)
         except:
             print('Exception type : ' + str(sys.exc_info()[0]))
