@@ -30,6 +30,7 @@
     <div class="file-upload" id="jstree"></div>
     <br>
     <button type="button" id="add-dir" class="add-dir-button">Add a folder</button>
+    <button type="button" id="delete-selected" class="delete-selected">Delete Selected</button>
     <div class="file-upload">
       <div class="image-upload-wrap">
           <input id="chunked_upload" type="file" name="the_file" class="file-upload-input" accept="file" multiple="">
@@ -53,6 +54,8 @@
     //hide add button
     var addButton = $('#add-dir');
     addButton.hide();
+    var deleteSelectedButton = $("#delete-selected");
+    deleteSelectedButton.hide();
 
     var csrf      = $("input[name='csrfmiddlewaretoken']")[0].value;
     var form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
@@ -85,9 +88,21 @@
     $('#jstree').on("changed.jstree", function (e, data) {
        //set selected path
        if (data.node != undefined){
+           const fullTree = $('#jstree').jstree(true).get_json('#', {flat:true});
+           selectedArray = new Array();
+           for (i in fullTree){
+             let thisNode = fullTree[i]
+             let fullPath = data.instance.get_path(thisNode, '/');
+             if (thisNode.state.selected == true) {
+              // add full path to object and add to array
+              thisNode["fullPath"] = fullPath; 
+              selectedArray.push(thisNode);
+            }
+           }
            selected = data.node.original.fullPath;
            //show add button when folder is chosen
            addButton.show();
+           deleteSelectedButton.show();
        }
    });
 
@@ -154,11 +169,82 @@ $( "#add-dir" ).click(function(e) {
    addFolder(e, newPath);
 });
 
+// handle deleting a selected file or folder
+$( "#delete-selected" ).click(function(e) {
+
+   // prep string for list to delete confirmation message
+   let selectedString = new String();
+   for (i in selectedArray){
+     let thisTitle = selectedArray[i]["text"];
+     const arrayLength = selectedArray.length;
+     if (parseInt(i) + 1 == arrayLength){
+       selectedString = selectedString + thisTitle + '.\n\n';
+     }else{
+      selectedString = selectedString + thisTitle + '\n';
+     }
+    
+   }
+   // delete files if user confirms
+   if (confirm('You are about to delete file/s or folder/s: \n\n' + selectedString + 'Are you sure that\'s what you want to do?')){
+     let arrayToDelete = new Array();
+     for (i in selectedArray){
+       let thisNode = selectedArray[i];
+       if (thisNode.parent == '#') {
+         alert('The selected items includes the root folder. You can\'t do this');
+         return;
+       }else if (thisNode.state.selected == true){
+         arrayToDelete.push(thisNode);
+       }
+     }
+     deleteSelected(e, arrayToDelete);
+   }
+});
+
+function deleteSelected(event, path) {
+  event.preventDefault();
+    var data        = {'delete_path' : path};
+    var dataPayload = JSON.stringify(data);
+
+  $.ajax({
+      method:'POST',
+      url: "{% url 'delete_path' %}",
+      beforeSend: function(xhr){xhr.setRequestHeader('X-CSRFToken', "{{csrf_token}}");},
+      type: $(this).attr('method'),
+      data: dataPayload,
+      cache: false,
+      processData: false,
+      contentType: false,
+      success: function(data) {
+          console.log('success = ' + dataPayload);
+          location.reload(true);
+      },
+      dataType:'text',
+      progress: function(e) {
+        //make sure we can compute the length
+        if(e.lengthComputable) {
+            //calculate the percentage loaded
+            var pct = (e.loaded / e.total) * 100;
+
+            //log percentage loaded
+            console.log(pct);
+        }
+        //this usually happens when Content-Length isn't set
+        else {
+            console.log('Content Length not reported!');
+        }
+    }
+  }).done(function (e) {
+    // Do something
+       console.log('Success on done');
+
+    });
+  return false;
+}
+
 function addFolder(event, path) {
   event.preventDefault();
     var data        = {'newPath' : path};
     var dataPayload = JSON.stringify(data);
-    console.log('new folder path payload = ' + dataPayload);
 
   $.ajax({
       method:'POST',
@@ -170,7 +256,7 @@ function addFolder(event, path) {
       processData: false,
       contentType: false,
       success: function(data) {
-          console.log('success = ' + JSON.stringify(data));
+          console.log('success = ' + dataPayload);
           location.reload(true);
       },
       dataType:'text',

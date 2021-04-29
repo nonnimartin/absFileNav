@@ -43,20 +43,40 @@ def new_path(request):
 
 
 def delete_path(request):
+
     if request.method == 'POST':
         body_string = request.body
+        stored_settings = UserSettings.objects.all()
         body = json.loads(body_string)
-        delete_path = body['delete_path']
+        delete_body = body['delete_path']
 
-        # write new directory to file system
-        #delete_path = create_dir(delete_path)
-
-        if new_dir:
-            return HttpResponse({'success'}, content_type='application/json')
+        # if stored setting for path is present, use it, otherwise use the setting in config file
+        if len(stored_settings[0].base_folder) == 0:
+            # use config file
+            base_path = settings.FILE_SYSTEM_ROOT
         else:
-            failure_response = HttpResponse()
-            failure_response.status_code = 500
-            return failure_response
+            # use stored setting
+            base_path = stored_settings[0].base_folder
+
+        # now taking list
+        for node in delete_body:
+            node_path = node["fullPath"]
+            # remove first directory from path if not at root
+            path_remainder = node_path.split("/", 1)[1]
+            combined_path = base_path + "/" + path_remainder
+
+            try:
+                # not actually deleting yet
+                print('gonna delete this file:')
+                print(combined_path)
+                os.remove(combined_path)
+
+            except:
+                failure_response = HttpResponse()
+                failure_response.status_code = 500
+                return failure_response
+        return HttpResponse({'success'}, content_type='application/json')
+
     else:
         return HttpResponse('{}', content_type='application/json')
 
@@ -153,10 +173,6 @@ def clear_base_folder(request):
     except Exception as error:
         print('Error writing to database: ' + str(error))
         return HttpResponse('FAILURE')
-
-
-def delete_file(file_path):
-    os.remove(file_path)
 
 
 def user_settings(request):
@@ -302,7 +318,7 @@ def receive_resumable(request):
         total_chunks = int(request.POST.get('resumableTotalChunks'))
         file_root_name = this_file.name + '-TMPFILE-'
         tmp_file_name = file_root_name + str(chunk_num)
-        #tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
+        # tmp_dir          = destination_dir + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dir = settings.MEDIA_ROOT + '/tmp-TMPDIR-' + this_file.name + '/'
         tmp_dest = tmp_dir + tmp_file_name
 
@@ -334,7 +350,7 @@ def receive_resumable(request):
                 concatenate_files(file_name, destination_dir,
                                   tmp_dir, total_chunks, destination_path)
                 # move file from temporary location to intended destination
-                #shutil.move(destination_path, )
+                # shutil.move(destination_path, )
                 # clear maps from memory to avoid memory leak
                 delete_keys(file_root_name)
 
