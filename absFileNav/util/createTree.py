@@ -22,7 +22,6 @@ def path_hierarchy(path):
             path_hierarchy(os.path.join(path, contents))
             for contents in os.listdir(path)
         ]
-        print('child ' + str(hierarchy['children']))
     except OSError as e:
         if e.errno != errno.ENOTDIR:
             raise

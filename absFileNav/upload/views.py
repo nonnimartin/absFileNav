@@ -139,7 +139,6 @@ def index(request):
         context['base_folder'] = str(stored_settings[0].base_folder)
     context['json_file_tree'] = createTree.get_tree(
         settings.FILE_SYSTEM_ROOT, True)
-    print("file tree = " + str(context['json_file_tree']))
 
     return HttpResponse(template.render(context, request))
 
